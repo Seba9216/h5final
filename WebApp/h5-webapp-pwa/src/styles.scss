@@ -1,0 +1,69 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+@import "bootstrap-icons/font/bootstrap-icons.scss";
+/* The Track Container */
+.race-track {
+  width: 100%;
+  padding: 16px;
+  background-color: #f8f9fa;
+  position: relative;
+  overflow: hidden;
+  border-left: 10px solid #dee2e6;
+  
+  // Visual Finish Line
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    width: 10px;
+    background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), 
+                      linear-gradient(45deg, #000 25%, #fff 25%, #fff 75%, #000 75%, #000);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+    border-left: 2px solid #333;
+  }
+}
+
+.duck-lane {
+  width: 48px;
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+  /* RESET STATE: Smooth slide back to start */
+  transition: transform 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95); 
+  transform: translateX(0); 
+  margin-bottom: 20px;
+}
+
+.duck-lane.racing {
+  transition: none; 
+  animation-name: race;
+  animation-duration: var(--race-speed);
+  animation-timing-function: linear;
+  animation-fill-mode: forwards; 
+}
+
+.duck-wrapper {
+  display: inline-block;
+  transform-origin: center bottom;
+}
+
+.duck-lane.racing .duck-wrapper {
+  animation: waddle 0.4s infinite ease-in-out alternate;
+}
+
+/* --- Keyframes --- */
+@keyframes race {
+  from { transform: translateX(0); }
+  /* Moves to the end of the container minus duck width and finish line padding */
+  to { transform: translateX(calc(100cqw - 80px)); }
+}
+
+@keyframes waddle {
+  0% { transform: rotate(-12deg) translateY(0); }
+  100% { transform: rotate(12deg) translateY(-10px); }
+}
