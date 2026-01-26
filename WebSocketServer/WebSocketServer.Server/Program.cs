@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using WebSocketServer.Core.LobbyManager;
 
 var builder = WebApplication.CreateBuilder(args);
 Startup startup = new();
@@ -142,6 +143,12 @@ public class WebSocketHandler
                     break;
                 case "private":
                     await SendPrivateMessage(connectionId, json.RootElement);
+                    break;
+                case "create_lobby":
+                    await LobbyManager.Instance.CreateLobby(connectionId);
+                    break;
+                case "join_lobby":
+                    await LobbyManager.Instance.JoinLobby(connectionId, message);
                     break;
                 default:
                     await Echo(connectionId, message);

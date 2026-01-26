@@ -7,4 +7,7 @@
     <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>   
   </PropertyGroup>
    
+   <ItemGroup>
+      <ProjectReference Include="..\WebSocketServer.Core\WebSocketServer.Core.csproj" />
+   </ItemGroup>
 </Project>
