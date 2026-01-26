@@ -135,6 +135,7 @@ public class WebSocketHandler
         {
             var json = JsonDocument.Parse(message);
             var type = json.RootElement.GetProperty("type").GetString();
+            int lobbyCode = 0;
 
             switch (type)
             {
@@ -145,13 +146,23 @@ public class WebSocketHandler
                     await SendPrivateMessage(connectionId, json.RootElement);
                     break;
                 case "create_lobby":
-                    int lobbyCode = LobbyManager.Instance.CreateLobby(connectionId);
+                    lobbyCode = LobbyManager.Instance.CreateLobby(connectionId);
                     await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"lobby_created\", \"lobby_code\": {lobbyCode.ToString()}}}");
                     break;
                 case "join_lobby":
-                    bool joined = LobbyManager.Instance.JoinLobby(connectionId, message);
+                    string duckerName = json.RootElement.GetProperty("ducker_name").GetString()!;
+                    lobbyCode = json.RootElement.GetProperty("lobby_code").GetInt32();
+
+                    bool joined = LobbyManager.Instance.JoinLobby(connectionId, lobbyCode, duckerName);
                     if(joined) {
                         await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"joined_lobby\"}}");
+                        List<string> ConnectionsInLobby = LobbyManager.Instance.GetConnectionsFromLobbyCode(lobbyCode);
+                        foreach(string Connection in ConnectionsInLobby) {
+                            if(Connection == connectionId)
+                                continue;
+
+                            await _connectionManager.SendAsync(Connection, $"{{\"type\":\"player_joined\", \"player_name\": \"{duckerName}\"}}");
+                        }
                     }
                     else
                     {

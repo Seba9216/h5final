@@ -7,11 +7,11 @@ namespace WebSocketServer.Core.LobbyManager;
 
 public class Ducker {
     public string ConnectionID;
-    public string RacerName;
+    public string DuckerName;
 
-    public Ducker(string connectionID, string racerName) {
+    public Ducker(string connectionID, string duckerName) {
         ConnectionID = connectionID;
-        RacerName = racerName;
+        DuckerName = duckerName;
     }
 }
 
@@ -43,16 +43,30 @@ public sealed class LobbyManager
         return lobbyCode;
     }
 
-    public bool JoinLobby(string connectionId, string message)
+    public bool JoinLobby(string connectionId, int lobbyCode, string duckerName)
     {
-        var json = JsonDocument.Parse(message);
-        int lobbyCode = json.RootElement.GetProperty("lobby_code").GetInt32();
-        string racerName = json.RootElement.GetProperty("ducker_name").GetString()!;
-
         if (!_lobbies.ContainsKey(lobbyCode))
             return false;
 
-        _lobbies[lobbyCode].Add(new Ducker(connectionId, racerName));
+        if(string.IsNullOrEmpty(duckerName))
+            return false;
+
+        _lobbies[lobbyCode].Add(new Ducker(connectionId, duckerName));
         return true;
+    }
+
+    public List<string> GetConnectionsFromLobbyCode(int lobbyID)
+    {
+        List<string> connections = new();
+
+        if (_lobbies.TryGetValue(lobbyID, out var lobby))
+        {
+            foreach (var ducker in lobby)
+            {
+                connections.Add(ducker.ConnectionID);
+            }
+        }
+
+        return connections;
     }
 }
