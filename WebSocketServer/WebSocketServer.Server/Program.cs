@@ -149,8 +149,10 @@ public class WebSocketHandler
                     await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"lobby_created\", \"lobby_code\": {lobbyCode.ToString()}}}");
                     break;
                 case "join_lobby":
-                    string response = LobbyManager.Instance.JoinLobby(connectionId, message);
-                    await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"joined_lobby\"}}");
+                    bool joined = LobbyManager.Instance.JoinLobby(connectionId, message);
+                    if(joined) {
+                        await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"joined_lobby\"}}");
+                    }
                     break;
                 default:
                     await Echo(connectionId, message);

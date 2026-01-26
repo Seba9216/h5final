@@ -28,7 +28,8 @@ public sealed class LobbyManager
         var json = JsonDocument.Parse(message);
         int lobbyCode = json.RootElement.GetProperty("lobby_code").GetInt32();
 
-        _lobbies[lobbyCode].Add(connectionId);
-        return "Joined lobby";
+        // _lobbies[lobbyCode].Add(connectionId);
+        
+        return true;
     }
 }
