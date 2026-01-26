@@ -112,10 +112,6 @@ public class WebSocketHandler
                     await HandleTextMessage(connectionId, message);
                     break;
 
-                case WebSocketMessageType.Binary:
-                    await HandleBinaryMessage(connectionId, buffer.Array.Take(result.Count).ToArray());
-                    break;
-
                 case WebSocketMessageType.Close:
                     await webSocket.CloseAsync(
                         result.CloseStatus.Value,
@@ -141,9 +137,6 @@ public class WebSocketHandler
             {
                 case "broadcast":
                     await BroadcastMessage(connectionId, message);
-                    break;
-                case "private":
-                    await SendPrivateMessage(connectionId, json.RootElement);
                     break;
                 case "create_lobby":
                     lobbyCode = LobbyManager.Instance.CreateLobby(connectionId);
@@ -180,12 +173,6 @@ public class WebSocketHandler
         }
     }
 
-    private async Task HandleBinaryMessage(string connectionId, byte[] data)
-    {
-        _logger.LogInformation($"Received binary from {connectionId}: {data.Length} bytes");
-        // Process binary data
-    }
-
     private async Task Echo(string connectionId, string message)
     {
         await _connectionManager.SendAsync(connectionId, $"Echo: {message}");
@@ -194,14 +181,6 @@ public class WebSocketHandler
     private async Task BroadcastMessage(string senderId, string message)
     {
         await _connectionManager.BroadcastAsync(message, senderId);
-    }
-
-    private async Task SendPrivateMessage(string senderId, JsonElement json)
-    {
-        var targetId = json.GetProperty("target").GetString();
-        var content = json.GetProperty("content").GetString();
-
-        await _connectionManager.SendAsync(targetId, content);
     }
 }
 
