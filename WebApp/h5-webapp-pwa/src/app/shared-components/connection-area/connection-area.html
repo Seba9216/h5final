@@ -1,0 +1,34 @@
+<div class="row">
+  <!-- Join Game Card -->
+  <div class="col-sm-6 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <label for="gamePin" class="form-label">Game pin</label>
+<input
+  type="text"
+  class="form-control mb-3"
+  id="gamePin"
+  placeholder="123456"
+  inputmode="numeric"
+  pattern="[0-9]*"
+  maxlength="6"
+  (input)="gamePin = $any($event.target).value.replace(/[^0-9]/g, '')"
+/>
+        <button class="btn btn-success w-100" (click)="JoinGame()">
+          Join game
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Game Card -->
+  <div class="col-sm-6 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <button class="btn btn-warning w-100" (click)="CreateGame()">
+          Create game
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

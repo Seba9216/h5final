@@ -23,13 +23,18 @@ public sealed class LobbyManager
         return lobbyCode;
     }
 
-    public string JoinLobby(string connectionId, string message)
+    public bool JoinLobby(string connectionId, string message)
     {
         var json = JsonDocument.Parse(message);
         int lobbyCode = json.RootElement.GetProperty("lobby_code").GetInt32();
-
-        // _lobbies[lobbyCode].Add(connectionId);
-        
+        if (_lobbies.ContainsKey(lobbyCode))
+        {
+            _lobbies[lobbyCode].Add(connectionId);
+        }
+        else
+        {
+            return false;
+        }
         return true;
     }
 }

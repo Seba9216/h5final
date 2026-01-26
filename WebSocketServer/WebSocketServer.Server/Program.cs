@@ -153,6 +153,10 @@ public class WebSocketHandler
                     if(joined) {
                         await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"joined_lobby\"}}");
                     }
+                    else
+                    {
+                        await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"error\", \"message\":\"Lobby not found.\"}}");
+                    }
                     break;
                 default:
                     await Echo(connectionId, message);
