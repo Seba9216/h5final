@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace WebSocketServer.Core.LobbyManager;
 
-public class DuckRacer {
+public class Ducker {
     public string ConnectionID;
     public string RacerName;
 
-    public DuckRacer(string connectionID, string racerName) {
+    public Ducker(string connectionID, string racerName) {
         ConnectionID = connectionID;
         RacerName = racerName;
     }
@@ -24,9 +24,9 @@ public sealed class LobbyManager
 
     private LobbyManager() { }
 
-    private readonly Dictionary<int, List<DuckRacer>> _lobbies = new();
+    private readonly Dictionary<int, List<Ducker>> _lobbies = new();
 
-    public int CreateLobby(string connectionId, string message)
+    public int CreateLobby(string connectionId)
     {
         int lobbyCode;
         do
@@ -35,12 +35,9 @@ public sealed class LobbyManager
         }
         while (_lobbies.ContainsKey(lobbyCode));
 
-        var json = JsonDocument.Parse(message);
-        string racerName = json.RootElement.GetProperty("ducker_name").GetString()!;
-
         _lobbies.Add(
             lobbyCode,
-            new List<DuckRacer> { new DuckRacer(connectionId, racerName) }
+            new List<Ducker> {}
         );
 
         return lobbyCode;
@@ -55,7 +52,7 @@ public sealed class LobbyManager
         if (!_lobbies.ContainsKey(lobbyCode))
             return false;
 
-        _lobbies[lobbyCode].Add(new DuckRacer(connectionId, racerName));
+        _lobbies[lobbyCode].Add(new Ducker(connectionId, racerName));
         return true;
     }
 }
