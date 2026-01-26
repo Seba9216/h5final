@@ -10,8 +10,5 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.2" />
   </ItemGroup>
 
-   <ItemGroup>
-      <ProjectReference Include="..\WebSocketServer.Server\WebSocketServer.Server.csproj" />
-   </ItemGroup>
 
 </Project>
