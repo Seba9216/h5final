@@ -145,7 +145,7 @@ public class WebSocketHandler
                     await SendPrivateMessage(connectionId, json.RootElement);
                     break;
                 case "create_lobby":
-                    int lobbyCode = LobbyManager.Instance.CreateLobby(connectionId);
+                    int lobbyCode = LobbyManager.Instance.CreateLobby(connectionId, message);
                     await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"lobby_created\", \"lobby_code\": {lobbyCode.ToString()}}}");
                     break;
                 case "join_lobby":
