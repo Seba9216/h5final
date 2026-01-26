@@ -16,19 +16,19 @@ public sealed class LobbyManager
 
     private readonly Dictionary<int, List<string>> _lobbies = new();
 
-    public Task CreateLobby(string connectionId)
+    public int CreateLobby(string connectionId)
     {
         int lobbyCode = Random.Shared.Next(100000, 999999);
         _lobbies.Add(lobbyCode, new List<string> { connectionId });
-        return SendAsync(connectionId, lobbyCode);
+        return lobbyCode;
     }
 
-    public Task JoinLobby(string connectionId, string message)
+    public string JoinLobby(string connectionId, string message)
     {
         var json = JsonDocument.Parse(message);
         int lobbyCode = json.RootElement.GetProperty("LobbyCode").GetInt32();
 
         _lobbies[lobbyCode].Add(connectionId);
-        return Task.CompletedTask;
+        return "Joined lobby";
     }
 }

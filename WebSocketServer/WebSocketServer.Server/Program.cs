@@ -145,10 +145,12 @@ public class WebSocketHandler
                     await SendPrivateMessage(connectionId, json.RootElement);
                     break;
                 case "create_lobby":
-                    await LobbyManager.Instance.CreateLobby(connectionId);
+                    int lobbyCode = LobbyManager.Instance.CreateLobby(connectionId);
+                    await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"lobby_created\", \"lobby_code\": {lobbyCode.ToString()}}}");
                     break;
                 case "join_lobby":
-                    await LobbyManager.Instance.JoinLobby(connectionId, message);
+                    string response = LobbyManager.Instance.JoinLobby(connectionId, message);
+                    await _connectionManager.SendAsync(connectionId, $"{{\"type\":\"joined_lobby\"}}");
                     break;
                 default:
                     await Echo(connectionId, message);
