@@ -26,7 +26,7 @@ public sealed class LobbyManager
     public string JoinLobby(string connectionId, string message)
     {
         var json = JsonDocument.Parse(message);
-        int lobbyCode = json.RootElement.GetProperty("LobbyCode").GetInt32();
+        int lobbyCode = json.RootElement.GetProperty("lobby_code").GetInt32();
 
         _lobbies[lobbyCode].Add(connectionId);
         return "Joined lobby";
