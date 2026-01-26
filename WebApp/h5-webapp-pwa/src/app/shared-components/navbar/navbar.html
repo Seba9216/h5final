@@ -1,27 +1,32 @@
-<ul ngbNav #nav="ngbNav" class="nav-tabs">
-      <li ngbNavItem>
-        <a href="/">
-    <button ngbNavLink>Home
-        <i class="bi bi-house-door-fill"></i>
-    </button>
-        </a>    
-    <ng-template ngbNavContent></ng-template>
+<ul ngbNav class="nav-tabs">
+  <li ngbNavItem>
+    <a
+      ngbNavLink
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home <i class="bi bi-house-door-fill"></i>
+    </a>
   </li>
-    <li ngbNavItem>
-  <a href="/poker">
-        <button ngbNavLink>Planning poker
-        <i  class="bi bi-suit-spade-fill"></i>
-    </button>
-    <ng-template ngbNavContent></ng-template>
-</a>
-</li>
-<li ngbNavItem>
-    <a href="/duckrace">
-    <button ngbNavLink>Duck Race
-        <i class="bi bi-person-wheelchair"></i>
-    </button>
-    <ng-template ngbNavContent></ng-template>
-</a>  
-</li>
+
+  <li ngbNavItem>
+    <a
+      ngbNavLink
+      routerLink="/poker"
+      routerLinkActive="active"
+    >
+      Planning Poker <i class="bi bi-suit-spade-fill"></i>
+    </a>
+  </li>
+
+  <li ngbNavItem>
+    <a
+      ngbNavLink
+      routerLink="/duckrace"
+      routerLinkActive="active"
+    >
+      Duck Race <i class="bi bi-person-wheelchair"></i>
+    </a>
+  </li>
 </ul>
-<div [ngbNavOutlet]="nav"></div>

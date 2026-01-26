@@ -62,8 +62,12 @@
     }
   </div>
 
-  <div class="text-center mt-4">
-    <p class="badge bg-dark p-2" *ngIf="raceStarted">Race in progress...</p>
-    <p class="badge bg-success p-2" *ngIf="!raceStarted">Preparing ducks...</p>
-  </div>
+<div class="text-center mt-4">
+  @if (raceStarted) {
+    <p class="badge bg-dark p-2">Race in progress...</p>
+  } @else {
+    <p class="badge bg-success p-2">Preparing ducks...</p>
+  }
+</div>
+
 </div>

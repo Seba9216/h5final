@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { linkedSignalUpdateFn } from '@angular/core/primitives/signals';
+import { RouterLinkActive } from '@angular/router';
 import {
 	NgbNavContent,
 	NgbNav,
@@ -12,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-navbar',
-  	imports: [NgbNavContent, NgbNav, NgbNavItem, NgbNavItemRole, NgbNavLinkButton, NgbNavLinkBase, NgbNavOutlet],
+  	imports: [NgbNavContent, NgbNav, NgbNavItem, NgbNavItemRole, NgbNavLinkButton, NgbNavLinkBase, NgbNavOutlet,RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })

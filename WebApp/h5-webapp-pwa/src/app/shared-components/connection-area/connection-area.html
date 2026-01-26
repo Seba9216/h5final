@@ -14,6 +14,14 @@
   maxlength="6"
   (input)="gamePin = $any($event.target).value.replace(/[^0-9]/g, '')"
 />
+<label for="duckerName" class="form-label">Ducker Name</label>
+<input
+  type="text"
+  class="form-control mb-3"
+  id="duckerName"
+  placeholder="Jens"
+  (input)="duckerName = $any($event.target).value"
+/>
         <button class="btn btn-success w-100" (click)="JoinGame()">
           Join game
         </button>
