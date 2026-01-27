@@ -85,10 +85,12 @@ public class MessageHandler : IMessageHandler
             if (joined)
             {
                 // Send confirmation to the joining player
-                string ConnectedPlayers;
-                foreach (var player in connectionsInLobby)
+
+                string ConnectedPlayers = String.Empty;
+                var playersInLobby = _lobbyManager.GetPlayersFromLobbyCode(joinMessage.LobbyCode);
+                foreach (var player in playersInLobby)
                 {
-                    if (player != newPlayerConnectionId)
+                    if (player.Key != connectionId)
                     {
                         ConnectedPlayers += player.Value;
                     }
@@ -117,7 +119,7 @@ public class MessageHandler : IMessageHandler
 
     private async Task NotifyLobbyPlayersAsync(string newPlayerConnectionId, int lobbyCode, string playerName)
     {
-        var connectionsInLobby = _lobbyManager.GetConnectionsFromLobbyCode(lobbyCode);
+        var playersInLobby = _lobbyManager.GetPlayersFromLobbyCode(lobbyCode);
         
         var playerJoinedResponse = new PlayerJoinedResponse
         {
@@ -126,7 +128,7 @@ public class MessageHandler : IMessageHandler
         
         var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
 
-        foreach (var connection in connectionsInLobby)
+        foreach (var connection in playersInLobby)
         {
             if (connection.Key != newPlayerConnectionId)
             {
