@@ -64,7 +64,7 @@ public class LobbyManager : ILobbyManager
         return false;
     }
 
-    public List<string> GetConnectionsFromLobbyCode(int lobbyCode)
+    public Dictionary<string, string> GetConnectionsFromLobbyCode(int lobbyCode)
     {
         var connections = new List<string>();
 
@@ -74,7 +74,7 @@ public class LobbyManager : ILobbyManager
             {
                 foreach (var ducker in lobby)
                 {
-                    connections.Add(ducker.ConnectionId);
+                    connections.Add(new {ducker.ConnectionId, ducker.DuckerName});
                 }
             }
         }

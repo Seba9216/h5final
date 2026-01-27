@@ -29,6 +29,7 @@ public class LobbyCreatedResponse
 public class JoinedLobbyResponse
 {
     public string Type => "joined_lobby";
+    public string ConnectedPlayers => { get; set; } = string.Empty;
 }
 
 public class PlayerJoinedResponse

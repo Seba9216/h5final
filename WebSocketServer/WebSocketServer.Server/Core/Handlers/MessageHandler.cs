@@ -85,6 +85,15 @@ public class MessageHandler : IMessageHandler
             if (joined)
             {
                 // Send confirmation to the joining player
+                string ConnectedPlayers;
+                foreach (var player in connectionsInLobby)
+                {
+                    if (player != newPlayerConnectionId)
+                    {
+                        ConnectedPlayers += player.Value;
+                    }
+                }
+
                 var joinedResponse = new JoinedLobbyResponse();
                 await _connectionManager.SendAsync(
                     connectionId, 
@@ -117,11 +126,11 @@ public class MessageHandler : IMessageHandler
         
         var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
 
-        foreach (var connectionId in connectionsInLobby)
+        foreach (var connection in connectionsInLobby)
         {
-            if (connectionId != newPlayerConnectionId)
+            if (connection.Key != newPlayerConnectionId)
             {
-                await _connectionManager.SendAsync(connectionId, responseJson);
+                await _connectionManager.SendAsync(connection.Key, responseJson);
             }
         }
     }
