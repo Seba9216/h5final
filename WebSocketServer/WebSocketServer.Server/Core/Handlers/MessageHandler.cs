@@ -86,19 +86,18 @@ public class MessageHandler : IMessageHandler
             {
                 // Send confirmation to the joining player
 
-                string ConnectedPlayers = String.Empty;
                 var playersInLobby = _lobbyManager.GetPlayersFromLobbyCode(joinMessage.LobbyCode);
-                foreach (var player in playersInLobby)
-                {
-                    if (player.Key != connectionId)
-                    {
-                        ConnectedPlayers += player.Value;
-                    }
-                }
 
-                var joinedResponse = new JoinedLobbyResponse();
+                var joinedResponse = new JoinedLobbyResponse
+                {
+                    ConnectedPlayers = playersInLobby
+                        .Where(p => p.Key != connectionId)
+                        .Select(p => p.Value)
+                        .ToList()
+                };
+
                 await _connectionManager.SendAsync(
-                    connectionId, 
+                    connectionId,
                     JsonSerializer.Serialize(joinedResponse)
                 );
 
