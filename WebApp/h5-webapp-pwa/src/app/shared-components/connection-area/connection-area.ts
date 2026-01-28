@@ -85,6 +85,8 @@ export class ConnectionArea {
   public CreateGame() {
     this.setupWebSocket();
     this.sendWhenOpen({ type: "create_lobby" });
+    this.players = [];
+    this.cdr.detectChanges();
   }
 
   public JoinGame() {
