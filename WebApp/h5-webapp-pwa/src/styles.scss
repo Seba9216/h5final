@@ -67,3 +67,29 @@
   0% { transform: rotate(-12deg) translateY(0); }
   100% { transform: rotate(12deg) translateY(-10px); }
 }
+
+.player-tile {
+  height: 70px;
+  background: #46178f;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  animation: pop-in 0.2s ease;
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -64,24 +64,6 @@ public class LobbyManager : ILobbyManager
         return false;
     }
 
-    public Dictionary<string, string> GetPlayersFromLobbyCode(int lobbyCode)
-    {
-        var connections = new Dictionary<string, string>();
-
-        if (_lobbies.TryGetValue(lobbyCode, out var lobby))
-        {
-            lock (lobby)
-            {
-                foreach (var ducker in lobby)
-                {
-                    connections[ducker.ConnectionId] = ducker.DuckerName;
-                }
-            }
-        }
-
-        return connections;
-    }
-
     public List<Ducker> GetDuckersFromLobbyCode(int lobbyCode)
     {
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
@@ -120,6 +102,8 @@ public class LobbyManager : ILobbyManager
             {
                 lobby.Remove(duckerToRemove);
                 removed = true;
+
+                NotifyPlayerLeft(lobbyCode, duckerToRemove.DuckerName);
                 
                 _logger.LogInformation("Player {DuckerName} ({ConnectionId}) left lobby {LobbyCode}", 
                     duckerToRemove.DuckerName, connectionId, lobbyCode);

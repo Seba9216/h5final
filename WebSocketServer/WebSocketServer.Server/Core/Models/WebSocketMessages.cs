@@ -38,6 +38,12 @@ public class PlayerJoinedResponse
     public string PlayerName { get; set; } = string.Empty;
 }
 
+public class PlayerLeftResponse
+{
+    public string Type => "player_left";
+    public string PlayerName { get; set; } = string.Empty;
+}
+
 public class ErrorResponse
 {
     public string Type => "error";

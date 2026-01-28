@@ -86,13 +86,13 @@ public class MessageHandler : IMessageHandler
             {
                 // Send confirmation to the joining player
 
-                var playersInLobby = _lobbyManager.GetPlayersFromLobbyCode(joinMessage.LobbyCode);
+                var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(joinMessage.LobbyCode);
 
                 var joinedResponse = new JoinedLobbyResponse
                 {
                     ConnectedPlayers = playersInLobby
-                        .Where(p => p.Key != connectionId)
-                        .Select(p => p.Value)
+                        .Where(p => p.ConnectionId != connectionId)
+                        .Select(p => p.DuckerName)
                         .ToList()
                 };
 
@@ -118,7 +118,7 @@ public class MessageHandler : IMessageHandler
 
     private async Task NotifyLobbyPlayersAsync(string newPlayerConnectionId, int lobbyCode, string playerName)
     {
-        var playersInLobby = _lobbyManager.GetPlayersFromLobbyCode(lobbyCode);
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
         
         var playerJoinedResponse = new PlayerJoinedResponse
         {
@@ -127,11 +127,11 @@ public class MessageHandler : IMessageHandler
         
         var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
 
-        foreach (var connection in playersInLobby)
+        foreach (var player in playersInLobby)
         {
-            if (connection.Key != newPlayerConnectionId)
+            if (player.ConnectionId != newPlayerConnectionId)
             {
-                await _connectionManager.SendAsync(connection.Key, responseJson);
+                await _connectionManager.SendAsync(player.ConnectionId, responseJson);
             }
         }
     }
@@ -150,5 +150,21 @@ public class MessageHandler : IMessageHandler
 
         var responseJson = JsonSerializer.Serialize(errorResponse);
         await _connectionManager.SendAsync(connectionId, responseJson);
+    }
+
+    private async Task NotifyPlayerLeft(int lobbyCode, string playerName) {
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
+        
+        var playerJoinedResponse = new PlayerLeftResponse
+        {
+            PlayerName = playerName
+        };
+        
+        var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
+
+        foreach (var player in playersInLobby)
+        {
+            await _connectionManager.SendAsync(player.ConnectionId, responseJson);
+        }
     }
 }
