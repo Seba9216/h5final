@@ -7,6 +7,7 @@ public class LobbyManager : ILobbyManager
     private readonly ConcurrentDictionary<int, List<Ducker>> _lobbies = new();
     private readonly ConcurrentDictionary<string, int> _connectionToLobbyMap = new();
     private readonly ILogger<LobbyManager> _logger;
+    public event Func<int, string, Task>? PlayerLeftLobby;
 
     public LobbyManager(ILogger<LobbyManager> logger)
     {
@@ -87,42 +88,38 @@ public class LobbyManager : ILobbyManager
         return null;
     }
 
-    public bool LeaveLobby(string connectionId, int lobbyCode)
+public bool LeaveLobby(string connectionId, int lobbyCode)
+{
+    if (!_lobbies.TryGetValue(lobbyCode, out var lobby))
     {
-        if (!_lobbies.TryGetValue(lobbyCode, out var lobby))
-        {
-            return false;
-        }
-
-        bool removed = false;
-        lock (lobby)
-        {
-            var duckerToRemove = lobby.Find(d => d.ConnectionId == connectionId);
-            if (duckerToRemove != null)
-            {
-                lobby.Remove(duckerToRemove);
-                removed = true;
-
-                NotifyPlayerLeft(lobbyCode, duckerToRemove.DuckerName);
-                
-                _logger.LogInformation("Player {DuckerName} ({ConnectionId}) left lobby {LobbyCode}", 
-                    duckerToRemove.DuckerName, connectionId, lobbyCode);
-            }
-
-            if (lobby.Count == 0)
-            {
-                _lobbies.TryRemove(lobbyCode, out _);
-                _logger.LogInformation("Lobby {LobbyCode} removed (empty)", lobbyCode);
-            }
-        }
-
-        if (removed)
-        {
-            _connectionToLobbyMap.TryRemove(connectionId, out _);
-        }
-
-        return removed;
+        return false;
     }
+
+    bool removed = false;
+    lock (lobby)
+    {        
+        var duckerToRemove = lobby.Find(d => d.ConnectionId == connectionId);
+        if (duckerToRemove != null)
+        {
+            lobby.Remove(duckerToRemove);
+            removed = true;
+                        
+            PlayerLeftLobby?.Invoke(lobbyCode, duckerToRemove.DuckerName);
+        }
+
+        if (lobby.Count == 0)
+        {
+            _lobbies.TryRemove(lobbyCode, out _);
+        }
+    }
+
+    if (removed)
+    {
+        _connectionToLobbyMap.TryRemove(connectionId, out _);
+    }
+
+    return removed;
+}
 
     public void RemoveConnectionFromAllLobbies(string connectionId)
     {

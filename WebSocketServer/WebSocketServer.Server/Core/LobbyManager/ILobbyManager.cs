@@ -8,4 +8,6 @@ public interface ILobbyManager
     int? GetLobbyCodeForConnection(string connectionId);
     public List<Ducker> GetDuckersFromLobbyCode(int lobbyCode);
     void RemoveConnectionFromAllLobbies(string connectionId);
+
+    event Func<int, string, Task>? PlayerLeftLobby;
 }

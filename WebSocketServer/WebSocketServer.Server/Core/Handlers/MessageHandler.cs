@@ -19,6 +19,8 @@ public class MessageHandler : IMessageHandler
         _connectionManager = connectionManager;
         _lobbyManager = lobbyManager;
         _logger = logger;
+
+        _lobbyManager.PlayerLeftLobby += NotifyPlayerLeftAsync;
     }
 
     public async Task HandleMessageAsync(string connectionId, string messageType, string messageJson)
@@ -152,15 +154,16 @@ public class MessageHandler : IMessageHandler
         await _connectionManager.SendAsync(connectionId, responseJson);
     }
 
-    private async Task NotifyPlayerLeft(int lobbyCode, string playerName) {
+    private async Task NotifyPlayerLeftAsync(int lobbyCode, string playerName)
+    {
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
         
-        var playerJoinedResponse = new PlayerLeftResponse
+        var playerLeftResponse = new PlayerLeftResponse
         {
             PlayerName = playerName
         };
         
-        var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
+        var responseJson = JsonSerializer.Serialize(playerLeftResponse);
 
         foreach (var player in playersInLobby)
         {

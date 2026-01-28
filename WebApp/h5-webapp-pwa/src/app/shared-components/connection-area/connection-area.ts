@@ -61,7 +61,8 @@ export class ConnectionArea {
         this.cdr.detectChanges();
         break;
       case "player_left":
-        
+        this.players = this.players.filter(p => p !== message.PlayerName);
+        this.cdr.detectChanges();
         break;
 
       default:
