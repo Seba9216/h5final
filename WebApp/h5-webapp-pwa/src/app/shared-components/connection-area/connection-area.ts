@@ -38,8 +38,8 @@ ws.addEventListener("open", () => {
  
 ws.send(JSON.stringify({
      type: "join_lobby",
-     lobby_code: lobbyCode,
-     ducker_name: this.duckerName
+     LobbyCode: lobbyCode,
+     DuckerName: this.duckerName
  }));
 });
 ws.addEventListener("message", (data) => {
