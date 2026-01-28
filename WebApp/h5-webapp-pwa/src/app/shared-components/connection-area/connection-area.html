@@ -29,13 +29,15 @@
     </div>
   </div>
 
-  <!-- Create Game Card -->
-  <div class="col-sm-6 mb-3">
-    <div class="card h-100">
-      <div class="card-body">
-        <button class="btn btn-warning w-100" (click)="CreateGame()">
-          Create game
-        </button>
+<div class="col-sm-6 mb-3">
+  <div class="card h-100">
+    <div class="card-body">
+      <button class="btn btn-warning w-100 mb-3" (click)="CreateGame()">
+        Create game
+      </button>
+
+      <div class="alert alert-secondary mt-3">
+        {{ newGamePin }}
       </div>
     </div>
   </div>
