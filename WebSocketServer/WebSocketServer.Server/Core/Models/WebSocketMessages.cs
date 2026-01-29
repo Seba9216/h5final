@@ -36,19 +36,19 @@ public class LobbyCreatedResponse
 public class JoinedLobbyResponse
 {
     public string Type => "joined_lobby";
-    public List<string> ConnectedPlayers { get; set; } = new();
+    public List<Ducker> ConnectedPlayers { get; set; } = new();
 }
 
 public class PlayerJoinedResponse
 {
     public string Type => "player_joined";
-    public string PlayerName { get; set; } = string.Empty;
+    public Ducker Player { get; set; } = null!;
 }
 
 public class PlayerLeftResponse
 {
     public string Type => "player_left";
-    public string PlayerName { get; set; } = string.Empty;
+    public string ConnectionId { get; set; } = string.Empty;
 }
 
 public class ErrorResponse

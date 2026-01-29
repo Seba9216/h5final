@@ -90,15 +90,13 @@ public class MessageHandler : IMessageHandler
 
             if (joined)
             {
-                // Send confirmation to the joining player
-
                 var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(joinMessage.LobbyCode);
 
+                // Send confirmation to the joining player with all other players
                 var joinedResponse = new JoinedLobbyResponse
                 {
                     ConnectedPlayers = playersInLobby
                         .Where(p => p.ConnectionId != connectionId)
-                        .Select(p => p.DuckerName)
                         .ToList()
                 };
 
@@ -107,8 +105,8 @@ public class MessageHandler : IMessageHandler
                     JsonSerializer.Serialize(joinedResponse)
                 );
 
-                // Notify other players in the lobby
-                await NotifyLobbyPlayersAsync(connectionId, joinMessage.LobbyCode, joinMessage.DuckerName);
+                // Notify other players in the lobby about the new player
+                await NotifyLobbyPlayersAsync(connectionId, joinMessage.LobbyCode);
             }
             else
             {
@@ -122,13 +120,21 @@ public class MessageHandler : IMessageHandler
         }
     }
 
-    private async Task NotifyLobbyPlayersAsync(string newPlayerConnectionId, int lobbyCode, string playerName)
+    private async Task NotifyLobbyPlayersAsync(string newPlayerConnectionId, int lobbyCode)
     {
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
         
+        var newPlayer = playersInLobby.FirstOrDefault(p => p.ConnectionId == newPlayerConnectionId);
+        if (newPlayer == null)
+        {
+            _logger.LogWarning("Could not find player with ConnectionId {ConnectionId} in lobby {LobbyCode}", 
+                newPlayerConnectionId, lobbyCode);
+            return;
+        }
+        
         var playerJoinedResponse = new PlayerJoinedResponse
         {
-            PlayerName = playerName
+            Player = newPlayer
         };
         
         var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
@@ -142,7 +148,7 @@ public class MessageHandler : IMessageHandler
         }
 
         var hostId = _lobbyManager.GetLobbyHostId(lobbyCode);
-        if (hostId != null)
+        if (!string.IsNullOrEmpty(hostId) && hostId != newPlayerConnectionId)
         {
             await _connectionManager.SendAsync(hostId, responseJson);   
         }
@@ -164,13 +170,13 @@ public class MessageHandler : IMessageHandler
         await _connectionManager.SendAsync(connectionId, responseJson);
     }
 
-    private async Task NotifyPlayerLeftAsync(int lobbyCode, string playerName)
+    private async Task NotifyPlayerLeftAsync(int lobbyCode, string connectionId)
     {
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
         
         var playerLeftResponse = new PlayerLeftResponse
         {
-            PlayerName = playerName
+            ConnectionId = connectionId
         };
         
         var responseJson = JsonSerializer.Serialize(playerLeftResponse);
@@ -204,16 +210,16 @@ public class MessageHandler : IMessageHandler
 
         if (started)
         {
-            var PlayersInlobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
-            PlayersInlobby[new Random().Next(PlayersInlobby.Count)].Speed = Constants.DuckerMaxSpeed + 5;
+            var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
+            playersInLobby[Random.Shared.Next(playersInLobby.Count)].Speed = Constants.DuckerMaxSpeed + 5;
 
             var startGameResponse = new StartGameResponse
             {
-                Players = PlayersInlobby
+                Players = playersInLobby
             };
 
             var responseJson = JsonSerializer.Serialize(startGameResponse);
-            var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
+            
             foreach (var player in playersInLobby)
             {
                 await _connectionManager.SendAsync(player.ConnectionId, responseJson);

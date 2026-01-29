@@ -11,5 +11,5 @@ public interface ILobbyManager
     public bool StartGame(string ConnectionId, int lobbyCode);
     public string GetLobbyHostId(int lobbyCode);
 
-    event Func<int, string, Task>? PlayerLeftLobby;
+    event Func<int, string, Task>? PlayerLeftLobby; // lobbyCode, connectionId
 }

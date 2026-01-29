@@ -98,14 +98,8 @@ public class LobbyManager : ILobbyManager
 
         if (removed)
         {
-            string? playerName = lobby.Players.ContainsKey(connectionId)
-                ? lobby.Players[connectionId]
-                : null;
-
-            if (playerName != null)
-            {
-                PlayerLeftLobby?.Invoke(lobbyCode, playerName);
-            }
+            // Trigger event with connectionId instead of playerName
+            PlayerLeftLobby?.Invoke(lobbyCode, connectionId);
 
             if (lobby.PlayerCount == 0)
             {
@@ -140,10 +134,9 @@ public class LobbyManager : ILobbyManager
     {
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
         {
-            var hostConnectionId = lobby.HostConnectionId;
-            return hostConnectionId;
+            return lobby.HostConnectionId;
         }
 
-        return "";
+        return string.Empty;
     }
 }

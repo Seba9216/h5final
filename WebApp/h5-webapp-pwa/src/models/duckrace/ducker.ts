@@ -1,5 +1,5 @@
 export class Ducker {
-    public id: number | null = null
-    public name: string | null = null;
-    public speed: number | null = null;    
+    public connectionId: string = '';
+    public name: string = '';
+    public speed: number = 0;
 }

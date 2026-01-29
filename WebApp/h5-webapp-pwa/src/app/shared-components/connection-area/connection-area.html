@@ -4,24 +4,22 @@
     <div class="card h-100">
       <div class="card-body">
         <label for="gamePin" class="form-label">Game pin</label>
-<input
-  type="text"
-  class="form-control mb-3"
-  id="gamePin"
-  placeholder="123456"
-  inputmode="numeric"
-  pattern="[0-9]*"
-  maxlength="6"
-  (input)="gamePin = $any($event.target).value.replace(/[^0-9]/g, '')"
-/>
-<label for="duckerName" class="form-label">Ducker Name</label>
-<input
-  type="text"
-  class="form-control mb-3"
-  id="duckerName"
-  placeholder="Jens"
-  (input)="duckerName = $any($event.target).value"
-/>
+        <input type="text"
+               class="form-control mb-3"
+               id="gamePin"
+               placeholder="123456"
+               inputmode="numeric"
+               pattern="[0-9]*"
+               maxlength="6"
+               [(ngModel)]="gamePin"
+               (input)="gamePin = $any($event.target).value.replace(/[^0-9]/g, '')" />
+        <label for="duckerName" class="form-label">Ducker Name</label>
+        <input type="text"
+               class="form-control mb-3"
+               id="duckerName"
+               placeholder="Jens"
+               [(ngModel)]="duckerName"
+               (input)="duckerName = $any($event.target).value" />
         <button class="btn btn-success w-100" (click)="JoinGame()">
           Join game
         </button>
@@ -29,31 +27,29 @@
     </div>
   </div>
 
-<div class="col-sm-6 mb-3">
-  <div class="card h-100">
-    <div class="card-body">
-      <button class="btn btn-warning w-100 mb-3" (click)="CreateGame()">
-        Create game
-      </button>
-      <div class="alert alert-secondary mt-3">
-        {{ newGamePin }}
+  <div class="col-sm-6 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <button class="btn btn-warning w-100 mb-3" (click)="CreateGame()">
+          Create game
+        </button>
+        <div class="alert alert-secondary mt-3">
+          {{ newGamePin }}
+        </div>
+        <button class="btn btn-primary w-100 mb-3" (click)="StartGame()">
+          Start game
+        </button>
       </div>
-      <button class="btn btn-primary w-100 mb-3" (click)="StartGame()">
-        Start game
-      </button>
     </div>
   </div>
-</div>
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div
-      class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3"
-      *ngFor="let player of players"
-    >
-      <div class="player-tile">
-        {{ player }}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3"
+           *ngFor="let player of playersArray">
+        <div class="player-tile" [title]="player.connectionId">
+          {{ player.name }}
+        </div>
       </div>
     </div>
   </div>
-</div>

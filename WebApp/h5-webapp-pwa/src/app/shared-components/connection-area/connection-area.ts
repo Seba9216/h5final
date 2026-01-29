@@ -1,10 +1,11 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter, output } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Ducker } from '../../../models/duckrace/ducker';
 
 @Component({
   selector: 'app-connection-area',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './connection-area.html',
 })
 export class ConnectionArea {
@@ -12,7 +13,7 @@ export class ConnectionArea {
   gamePin = '';
   duckerName = '';
   newGamePin = '';
-  players: string[] = [];
+  players: Map<string, Ducker> = new Map(); // ConnectionId -> Ducker
   private ws: WebSocket | null = null;
   @Output() gameStarted = new EventEmitter<Ducker[]>();
   
@@ -54,26 +55,49 @@ export class ConnectionArea {
         break;
 
       case "joined_lobby":
-        this.players = [this.duckerName, ...message.ConnectedPlayers];
+        this.players.clear();
+        const currentPlayer: Ducker = {
+          connectionId: 'self',
+          name: this.duckerName,
+          speed: 0
+        };
+        this.players.set('self', currentPlayer);
+        
+        message.ConnectedPlayers.forEach((ducker: any) => {
+          const player: Ducker = {
+            connectionId: ducker.ConnectionId,
+            name: ducker.DuckerName,
+            speed: ducker.Speed
+          };
+          this.players.set(ducker.ConnectionId, player);
+        });
         this.cdr.detectChanges();
         break;
 
       case "player_joined":
-        this.players.push(message.PlayerName);
+        const newPlayer: Ducker = {
+          connectionId: message.Player.ConnectionId,
+          name: message.Player.DuckerName,
+          speed: message.Player.Speed
+        };
+        this.players.set(message.Player.ConnectionId, newPlayer);
         this.cdr.detectChanges();
         break;
+
       case "player_left":
-        this.players = this.players.filter(p => p !== message.PlayerName);
+        this.players.delete(message.ConnectionId);
         this.cdr.detectChanges();
         break;
+
       case "start_game":
-            const duckers: Ducker[] = this.players.map(playerName => ({
-    id : 0,
-    name: playerName,
-    speed: 0,
-  }));
-    this.gameStarted.emit(duckers);
-    break;
+        const duckers: Ducker[] = message.Players.map((p: any) => ({
+          connectionId: p.ConnectionId,
+          name: p.DuckerName,
+          speed: p.Speed
+        }));
+        this.gameStarted.emit(duckers);
+        break;
+
       default:
         console.warn("Unknown message type:", message.Type);
     }
@@ -90,15 +114,15 @@ export class ConnectionArea {
       }, { once: true });
     }
   }
+
   public StartGame() {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +this.newGamePin });
-
   }
 
   public CreateGame() {
     this.setupWebSocket();
     this.sendWhenOpen({ type: "create_lobby" });
-    this.players = [];
+    this.players.clear();
     this.cdr.detectChanges();
   }
 
@@ -109,5 +133,9 @@ export class ConnectionArea {
       LobbyCode: +this.gamePin,
       DuckerName: this.duckerName
     });
+  }
+
+  get playersArray(): Ducker[] {
+    return Array.from(this.players.values());
   }
 }
