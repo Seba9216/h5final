@@ -17,11 +17,11 @@ export class HomePage implements OnInit {
   raceStarted = false;
 
   ducks = [
-    { id: 1, speed: 0, color: '#fbe405' },
-    { id: 2, speed: 0, color: '#ff5733' },
-    { id: 3, speed: 0, color: '#33ff57' },
-    { id: 4, speed: 0, color: '#3357ff' },
-    { id: 5, speed: 0, color: '#f033ff' }
+    { connectionId: "1", speed: 0, color: '#fbe405' },
+    { connectionId: "2", speed: 0, color: '#ff5733' },
+    { connectionId: "3", speed: 0, color: '#33ff57' },
+    { connectionId: "4", speed: 0, color: '#3357ff' },
+    { connectionId: "5", speed: 0, color: '#f033ff' }
   ];
 
   constructor(private cdr: ChangeDetectorRef) {}
