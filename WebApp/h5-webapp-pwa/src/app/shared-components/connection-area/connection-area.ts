@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,7 +14,7 @@ export class ConnectionArea {
   players: string[] = [];
   private ws: WebSocket | null = null;
   @Output() gameStarted = new EventEmitter<boolean>();
-
+  
   
   constructor(
     private cdr: ChangeDetectorRef
@@ -85,7 +85,7 @@ export class ConnectionArea {
   public StartGame() {
     this.sendWhenOpen({ type: "start_game" });
     this.gameStarted.emit(true);
-  
+
   }
 
   public CreateGame() {
