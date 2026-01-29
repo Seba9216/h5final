@@ -41,6 +41,9 @@ public class MessageHandler : IMessageHandler
             case "join_lobby":
                 await HandleJoinLobbyAsync(connectionId, messageJson);
                 break;
+            case "start_game":
+                await StartGameAsync(connectionId, messageJson);
+                break;
 
             default:
                 await HandleEchoAsync(connectionId, messageJson);
@@ -168,6 +171,51 @@ public class MessageHandler : IMessageHandler
         foreach (var player in playersInLobby)
         {
             await _connectionManager.SendAsync(player.ConnectionId, responseJson);
+        }
+    }
+
+    private async Task StartGameAsync(string connectionId, string message)
+    {
+        StartGameMessage? startGameMessage;
+        try
+        {
+            startGameMessage = JsonSerializer.Deserialize<StartGameMessage>(message);
+            if (startGameMessage == null)
+            {
+                throw new JsonException("Deserialized StartGameMessage is null");
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Error parsing start game message from {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "Invalid message format");
+            return;
+        }
+
+        int lobbyCode = startGameMessage.LobbyCode;
+        bool started = _lobbyManager.StartGame(connectionId, lobbyCode);
+
+        if (started)
+        {
+            var startGameResponse = new StartGameResponse
+            {
+            };
+            var responseJson = JsonSerializer.Serialize(startGameResponse);
+            var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
+            foreach (var player in playersInLobby)
+            {
+                await _connectionManager.SendAsync(player.ConnectionId, responseJson);
+            }
+        }
+        else
+        {
+            var errorResponse = new ErrorResponse
+            {
+                Message = "Failed to start game. You may not be the lobby host."
+            };
+
+            var responseJson = JsonSerializer.Serialize(errorResponse);
+            await _connectionManager.SendAsync(connectionId, responseJson);
         }
     }
 }

@@ -83,7 +83,7 @@ export class ConnectionArea {
     }
   }
   public StartGame() {
-    this.sendWhenOpen({ type: "start_game" });
+    this.sendWhenOpen({ type: "start_game", LobbyCode: +this.newGamePin });
     this.gameStarted.emit(true);
 
   }

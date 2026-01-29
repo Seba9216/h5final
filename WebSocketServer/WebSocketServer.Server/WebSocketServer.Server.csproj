@@ -10,4 +10,8 @@
    <ItemGroup>
       <ProjectReference Include="..\WebSocketServer.Core\WebSocketServer.Core.csproj" />
    </ItemGroup>
+   
+   <ItemGroup>
+     <Folder Include="Core\Enums\" />
+   </ItemGroup>
 </Project>
