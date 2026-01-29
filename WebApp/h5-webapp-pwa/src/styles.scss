@@ -1,9 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
 
-/* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
 @import "bootstrap-icons/font/bootstrap-icons.scss";
-/* The Track Container */
 .race-track {
   width: 100%;
   padding: 16px;
@@ -12,7 +9,6 @@
   overflow: hidden;
   border-left: 10px solid #dee2e6;
   
-  // Visual Finish Line
   &::after {
     content: '';
     position: absolute;

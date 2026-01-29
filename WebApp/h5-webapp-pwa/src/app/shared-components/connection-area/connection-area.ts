@@ -1,11 +1,10 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-connection-area',
   imports: [CommonModule],
   templateUrl: './connection-area.html',
-  styleUrl: './connection-area.scss',
 })
 export class ConnectionArea {
   private SERVER_URL = "ws://localhost:5057/ws";
@@ -14,7 +13,9 @@ export class ConnectionArea {
   newGamePin = '';
   players: string[] = [];
   private ws: WebSocket | null = null;
+  @Output() gameStarted = new EventEmitter<boolean>();
 
+  
   constructor(
     private cdr: ChangeDetectorRef
   ) { }
@@ -80,6 +81,11 @@ export class ConnectionArea {
         this.ws?.send(JSON.stringify(payload));
       }, { once: true });
     }
+  }
+  public StartGame() {
+    this.sendWhenOpen({ type: "start_game" });
+    this.gameStarted.emit(true);
+  
   }
 
   public CreateGame() {
