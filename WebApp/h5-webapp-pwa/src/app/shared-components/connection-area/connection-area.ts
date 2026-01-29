@@ -84,7 +84,7 @@ export class ConnectionArea {
     }
   }
   public StartGame() {
-    this.sendWhenOpen({ type: "start_game" });
+    this.sendWhenOpen({ type: "start_game", LobbyCode: +this.newGamePin });
       const duckers: Ducker[] = this.players.map(playerName => ({
     id : 0,
     name: playerName,
