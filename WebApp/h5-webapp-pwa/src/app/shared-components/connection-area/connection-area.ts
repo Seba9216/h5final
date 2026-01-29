@@ -66,7 +66,14 @@ export class ConnectionArea {
         this.players = this.players.filter(p => p !== message.PlayerName);
         this.cdr.detectChanges();
         break;
-
+      case "start_game":
+            const duckers: Ducker[] = this.players.map(playerName => ({
+    id : 0,
+    name: playerName,
+    speed: 0,
+  }));
+    this.gameStarted.emit(duckers);
+    break;
       default:
         console.warn("Unknown message type:", message.Type);
     }
@@ -85,12 +92,7 @@ export class ConnectionArea {
   }
   public StartGame() {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +this.newGamePin });
-      const duckers: Ducker[] = this.players.map(playerName => ({
-    id : 0,
-    name: playerName,
-    speed: 0,
-  }));
-    this.gameStarted.emit(duckers);
+
   }
 
   public CreateGame() {
