@@ -1,4 +1,5 @@
 using System.Text.Json;
+using WebSocketServer.Core.Configuration;
 using WebSocketServer.Core.Connections;
 using WebSocketServer.Core.LobbyManager;
 using WebSocketServer.Core.Models;
@@ -203,10 +204,14 @@ public class MessageHandler : IMessageHandler
 
         if (started)
         {
+            var PlayersInlobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
+            PlayersInlobby[new Random().Next(PlayersInlobby.Count)].Speed = Constants.DuckerMaxSpeed + 5;
+
             var startGameResponse = new StartGameResponse
             {
-                Players = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode)
+                Players = PlayersInlobby
             };
+
             var responseJson = JsonSerializer.Serialize(startGameResponse);
             var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
             foreach (var player in playersInLobby)

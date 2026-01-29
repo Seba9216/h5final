@@ -1,4 +1,5 @@
 namespace WebSocketServer.Core.LobbyManager;
+using WebSocketServer.Core.Configuration;
 
 public class Ducker
 {
@@ -11,6 +12,6 @@ public class Ducker
         ConnectionId = connectionId;
         DuckerName = duckerName;
 
-        Speed = Random.Shared.Next(10, 21);
+        Speed = Random.Shared.Next(Constants.DuckerMinSpeed, Constants.DuckerMaxSpeed);
     }
 }
