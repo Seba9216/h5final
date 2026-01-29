@@ -17,10 +17,6 @@ export class DuckRacePage {
     this.players = started;
     console.log('Game started:', this.players);
     this.gameHasStarted = true;
-        this.players = this.players.map(duck => ({
-      ...duck,
-      speed: Math.random() * (6 - 3) + 3
-    }));
     this.cdr.markForCheck();
   }
 }

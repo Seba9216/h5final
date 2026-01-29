@@ -67,11 +67,11 @@ export class ConnectionArea {
         this.cdr.detectChanges();
         break;
       case "start_game":
-            const duckers: Ducker[] = this.players.map(playerName => ({
-    id : 0,
-    name: playerName,
-    speed: 0,
-  }));
+         const duckers: Ducker[] = message.Players.map((player: any, index: number) => ({
+          id: index, // Use array index as id, or use ConnectionId if you prefer
+          name: player.DuckerName,
+          speed: player.Speed
+        }));
     this.gameStarted.emit(duckers);
     break;
       default:
