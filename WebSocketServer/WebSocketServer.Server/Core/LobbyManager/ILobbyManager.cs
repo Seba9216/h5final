@@ -9,6 +9,7 @@ public interface ILobbyManager
     public List<Ducker> GetDuckersFromLobbyCode(int lobbyCode);
     void RemoveConnectionFromAllLobbies(string connectionId);
     public bool StartGame(string ConnectionId, int lobbyCode);
+    public string GetLobbyHostId(int lobbyCode);
 
     event Func<int, string, Task>? PlayerLeftLobby;
 }

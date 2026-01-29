@@ -139,6 +139,12 @@ public class MessageHandler : IMessageHandler
                 await _connectionManager.SendAsync(player.ConnectionId, responseJson);
             }
         }
+
+        var hostId = _lobbyManager.GetLobbyHostId(lobbyCode);
+        if (hostId != null)
+        {
+            await _connectionManager.SendAsync(hostId, responseJson);   
+        }
     }
 
     private async Task HandleEchoAsync(string connectionId, string message)
@@ -206,6 +212,8 @@ public class MessageHandler : IMessageHandler
             {
                 await _connectionManager.SendAsync(player.ConnectionId, responseJson);
             }
+
+            await _connectionManager.SendAsync(connectionId, responseJson);
         }
         else
         {

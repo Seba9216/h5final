@@ -135,4 +135,15 @@ public class LobbyManager : ILobbyManager
 
         return false;
     }
+
+    public string GetLobbyHostId(int lobbyCode)
+    {
+        if (_lobbies.TryGetValue(lobbyCode, out var lobby))
+        {
+            var hostConnectionId = lobby.HostConnectionId;
+            return hostConnectionId;
+        }
+
+        return "";
+    }
 }
