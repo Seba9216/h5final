@@ -1,5 +1,6 @@
 import { Component, ChangeDetectorRef, Output, EventEmitter, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Ducker } from '../../../models/duckrace/ducker';
 
 @Component({
   selector: 'app-connection-area',
@@ -13,7 +14,7 @@ export class ConnectionArea {
   newGamePin = '';
   players: string[] = [];
   private ws: WebSocket | null = null;
-  @Output() gameStarted = new EventEmitter<boolean>();
+  @Output() gameStarted = new EventEmitter<Ducker[]>();
   
   
   constructor(
@@ -84,8 +85,12 @@ export class ConnectionArea {
   }
   public StartGame() {
     this.sendWhenOpen({ type: "start_game" });
-    this.gameStarted.emit(true);
-
+      const duckers: Ducker[] = this.players.map(playerName => ({
+    id : 0,
+    name: playerName,
+    speed: 0,
+  }));
+    this.gameStarted.emit(duckers);
   }
 
   public CreateGame() {
