@@ -5,7 +5,6 @@ import { ConnectionArea } from '../../shared-components/connection-area/connecti
   selector: 'app-planing-poker-page',
   imports: [ConnectionArea],
   templateUrl: './planing-poker-page.html',
-  styleUrl: './planing-poker-page.scss',
 })
 export class PlaningPokerPage {
 

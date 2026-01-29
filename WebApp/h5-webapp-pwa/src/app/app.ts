@@ -6,7 +6,6 @@ import { Navbar } from './shared-components/navbar/navbar';
   selector: 'app-root',
   imports: [RouterOutlet,Navbar],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
 })
 export class App {
   protected readonly title = signal('h5-webapp-pwa');
