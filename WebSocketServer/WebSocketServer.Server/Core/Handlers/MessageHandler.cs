@@ -205,6 +205,7 @@ public class MessageHandler : IMessageHandler
         {
             var startGameResponse = new StartGameResponse
             {
+                Players = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode)
             };
             var responseJson = JsonSerializer.Serialize(startGameResponse);
             var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);

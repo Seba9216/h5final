@@ -1,3 +1,5 @@
+using WebSocketServer.Core.LobbyManager;
+
 namespace WebSocketServer.Core.Models;
 
 public class WebSocketMessage
@@ -58,4 +60,5 @@ public class ErrorResponse
 public class StartGameResponse
 {
     public string Type => "start_game";
+    public List<Ducker> Players { get; set; } = new();
 }
