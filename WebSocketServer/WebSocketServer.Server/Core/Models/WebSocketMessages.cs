@@ -14,6 +14,11 @@ public class CreateLobbyMessage : WebSocketMessage
 {
 }
 
+public class StartGameMessage : WebSocketMessage
+{
+    public int LobbyCode { get; set; }
+}
+
 public class JoinLobbyMessage : WebSocketMessage
 {
     public string DuckerName { get; set; } = string.Empty;
@@ -48,4 +53,9 @@ public class ErrorResponse
 {
     public string Type => "error";
     public string Message { get; set; } = string.Empty;
+}
+
+public class StartGameResponse
+{
+    public string Type => "start_game";
 }

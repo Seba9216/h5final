@@ -7,11 +7,14 @@ public class Lobby
     public Dictionary<string, string> Players { get; set; } = new(); // ConnectionId -> PlayerName
     public DateTime CreatedAt { get; set; }
 
+    public LobbyStatus Status { get; set; } = LobbyStatus.Waiting;
+
     public Lobby(int code, string hostConnectionId)
     {
         Code = code;
         HostConnectionId = hostConnectionId;
         CreatedAt = DateTime.UtcNow;
+        Status = LobbyStatus.Waiting;
     }
 
     public bool AddPlayer(string connectionId, string playerName)
@@ -32,6 +35,15 @@ public class Lobby
     public List<string> GetConnectionIds()
     {
         return Players.Keys.ToList();
+    }
+
+    public bool StartGame(string ConnectionId)
+    {
+        if (ConnectionId != HostConnectionId || Status != LobbyStatus.Waiting)
+            return false;
+
+        Status = LobbyStatus.InGame;
+        return true;
     }
 
     public int PlayerCount => Players.Count;
