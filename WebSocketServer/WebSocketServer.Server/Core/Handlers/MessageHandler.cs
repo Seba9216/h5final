@@ -211,7 +211,7 @@ public class MessageHandler : IMessageHandler
         if (started)
         {
             var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
-            playersInLobby[Random.Shared.Next(playersInLobby.Count)].Speed = Constants.DuckerMaxSpeed + 5;
+            playersInLobby[Random.Shared.Next(playersInLobby.Count)].Speed = Constants.DuckerMinSpeed - 5;
 
             var startGameResponse = new StartGameResponse
             {

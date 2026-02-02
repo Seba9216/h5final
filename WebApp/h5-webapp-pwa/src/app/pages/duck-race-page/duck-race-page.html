@@ -8,6 +8,9 @@
           class="duck-lane" 
           [class.racing]="gameHasStarted"
           [style.--race-speed]="duck.speed + 's'"
+          appRaceFinish
+          [duckData]="duck"
+          (finishLine)="onDuckFinished($event)"
         >
           <div class="duck-wrapper">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="display: block;" viewBox="0 0 2048 2048" width="48" height="48" preserveAspectRatio="none">
@@ -64,7 +67,7 @@
     }
   </div>
 </div>
-
+<app-winner-modal #winnerModal></app-winner-modal>
   }@else{
 <app-connection-area (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area>
   }

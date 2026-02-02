@@ -1,0 +1,23 @@
+<!-- winner-modal.component.html -->
+<div class="modal fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">🏆 We Have a Winner! 🏆</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <h2 class="mb-4">{{ duckerName }} has won the race!</h2>
+        <div class="winner-animation">
+          🦆🎉
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="close()">Awesome!</button>
+      </div>
+    </div>
+  </div>
+</div>
+@if (isVisible) {
+  <div class="modal-backdrop fade show"></div>
+}
