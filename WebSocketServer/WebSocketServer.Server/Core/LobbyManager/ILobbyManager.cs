@@ -2,7 +2,7 @@ namespace WebSocketServer.Core.LobbyManager;
 
 public interface ILobbyManager
 {
-    int CreateLobby(string hostConnectionId);
+    int CreateLobby(string hostConnectionId, LobbyType lobbyType);
     bool JoinLobby(string connectionId, int lobbyCode, string playerName);
     bool LeaveLobby(string connectionId, int lobbyCode);
     int? GetLobbyCodeForConnection(string connectionId);

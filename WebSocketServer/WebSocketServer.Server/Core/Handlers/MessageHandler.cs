@@ -36,7 +36,7 @@ public class MessageHandler : IMessageHandler
                 break;
 
             case "create_lobby":
-                await HandleCreateLobbyAsync(connectionId);
+                await HandleCreateLobbyAsync(connectionId, messageJson);
                 break;
 
             case "join_lobby":
@@ -57,9 +57,30 @@ public class MessageHandler : IMessageHandler
         await _connectionManager.BroadcastAsync(message, connectionId);
     }
 
-    private async Task HandleCreateLobbyAsync(string connectionId)
+    private async Task HandleCreateLobbyAsync(string connectionId, string message)
     {
-        var lobbyCode = _lobbyManager.CreateLobby(connectionId);
+        LobbyType lobbyType;
+        try
+        {
+            var createLobbyMessage = JsonSerializer.Deserialize<CreateLobbyMessage>(message);
+            if (createLobbyMessage == null)
+            {
+                throw new JsonException("Deserialized CreateLobbyMessage is null");
+            }
+
+            if (!Enum.TryParse(createLobbyMessage.LobbyType, true, out lobbyType))
+            {
+                throw new JsonException($"Invalid lobby type: {createLobbyMessage.LobbyType}");
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Error parsing create lobby message from {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "Invalid message format");
+            return;
+        }
+
+        var lobbyCode = _lobbyManager.CreateLobby(connectionId, lobbyType);
         
         var response = new LobbyCreatedResponse
         {

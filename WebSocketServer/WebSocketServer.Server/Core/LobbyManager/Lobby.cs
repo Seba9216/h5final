@@ -6,15 +6,16 @@ public class Lobby
     public string HostConnectionId { get; set; } = string.Empty;
     public Dictionary<string, string> Players { get; set; } = new(); // ConnectionId -> PlayerName
     public DateTime CreatedAt { get; set; }
-
+    LobbyType LobbyType { get; set; }
     public LobbyStatus Status { get; set; } = LobbyStatus.Waiting;
 
-    public Lobby(int code, string hostConnectionId)
+    public Lobby(int code, string hostConnectionId, LobbyType lobbyType)
     {
         Code = code;
         HostConnectionId = hostConnectionId;
         CreatedAt = DateTime.UtcNow;
         Status = LobbyStatus.Waiting;
+        LobbyType = lobbyType;
     }
 
     public bool AddPlayer(string connectionId, string playerName)

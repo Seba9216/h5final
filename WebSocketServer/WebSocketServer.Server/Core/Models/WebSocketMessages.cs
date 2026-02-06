@@ -14,6 +14,7 @@ public class BroadcastMessage : WebSocketMessage
 
 public class CreateLobbyMessage : WebSocketMessage
 {
+    public string LobbyType { get; set; } = string.Empty;
 }
 
 public class StartGameMessage : WebSocketMessage

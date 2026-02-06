@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Ducker } from '../../../models/duckrace/ducker';
 
 @Component({
-  selector: 'app-connection-area',
+  selector: 'app-connection-area-poker',
   imports: [CommonModule, FormsModule],
-  templateUrl: './connection-area.html',
+  templateUrl: './connection-area-poker.html',
 })
-export class ConnectionArea {
+export class ConnectionAreaPoker {
   private SERVER_URL = "ws://localhost:5057/ws";
   gamePin = '';
   duckerName = '';
@@ -121,7 +121,7 @@ export class ConnectionArea {
 
   public CreateGame() {
     this.setupWebSocket();
-    this.sendWhenOpen({ type: "create_lobby", LobbyType: "DuckRace" });
+    this.sendWhenOpen({ type: "create_lobby", LobbyType: "PlanningPoker" });
     this.players.clear();
     this.cdr.detectChanges();
   }
@@ -133,6 +133,7 @@ export class ConnectionArea {
       LobbyCode: +this.gamePin,
       DuckerName: this.duckerName
     });
+
   }
 
   get playersArray(): Ducker[] {

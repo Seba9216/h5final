@@ -14,7 +14,7 @@ public class LobbyManager : ILobbyManager
         _logger = logger;
     }
 
-    public int CreateLobby(string connectionId)
+    public int CreateLobby(string connectionId, LobbyType lobbyType)
     {
         int lobbyCode;
         do
@@ -23,7 +23,7 @@ public class LobbyManager : ILobbyManager
         }
         while (_lobbies.ContainsKey(lobbyCode));
 
-        _lobbies.TryAdd(lobbyCode, new Lobby(lobbyCode, connectionId));
+        _lobbies.TryAdd(lobbyCode, new Lobby(lobbyCode, connectionId, lobbyType));
 
         _logger.LogInformation("Lobby {LobbyCode} created by connection {ConnectionId}",
             lobbyCode, connectionId);

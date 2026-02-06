@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { ConnectionArea } from '../../shared-components/connection-area/connection-area';
+import { ConnectionAreaPoker } from '../../shared-components/connection-area-poker/connection-area-poker';
 
 @Component({
   selector: 'app-planing-poker-page',
-  imports: [ConnectionArea],
+  imports: [ConnectionAreaPoker],
   templateUrl: './planing-poker-page.html',
 })
 export class PlaningPokerPage {
