@@ -1,141 +1,89 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { Ducker } from '../../../models/duckrace/ducker';
+import { GameSocketService } from '../../services/game-socket-service';
 
 @Component({
   selector: 'app-connection-area',
   imports: [CommonModule, FormsModule],
   templateUrl: './connection-area.html',
 })
-export class ConnectionArea {
-  private SERVER_URL = "ws://localhost:5057/ws";
+export class ConnectionArea implements OnInit, OnDestroy {
+  // UI Bindings expected by HTML
   gamePin = '';
   duckerName = '';
   newGamePin = '';
-  players: Map<string, Ducker> = new Map(); // ConnectionId -> Ducker
-  private ws: WebSocket | null = null;
+
+  // Local storage for players to satisfy the 'playersArray' getter
+  private _currentPlayers: Ducker[] = [];
+
   @Output() gameStarted = new EventEmitter<Ducker[]>();
-  
-  
+
+  // To manage memory and observables
+  private subs = new Subscription();
+
   constructor(
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private socketService: GameSocketService
   ) { }
 
-  private setupWebSocket() {
-    if (this.ws) {
-      this.ws.close();
-    }
+  ngOnInit(): void {
+    // 1. Subscribe to Players
+    // We manually subscribe here because we cannot use the 'async' pipe in the HTML
+    this.subs.add(
+      this.socketService.players$.subscribe(players => {
+        this._currentPlayers = players;
+        this.cdr.detectChanges(); // Force UI update
+      })
+    );
 
-    this.ws = new WebSocket(this.SERVER_URL);
-
-    this.ws.addEventListener("message", (event) => {
-      this.handleMessage(event);
-    });
-
-    this.ws.addEventListener("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-
-    this.ws.addEventListener("close", () => {
-      console.log("WebSocket closed");
-    });
-  }
-
-  private handleMessage(event: MessageEvent) {
-    console.log(event.data);
-    const message = JSON.parse(event.data.toString());
-    console.log("Received:", message);
-
-    switch (message.Type) {
-      case "lobby_created":
-        this.newGamePin = message.LobbyCode;
-        console.log("Lobby created:", message.LobbyCode);
+    // 2. Subscribe to Lobby Code creation
+    this.subs.add(
+      this.socketService.lobbyCode$.subscribe(code => {
+        this.newGamePin = code;
         this.cdr.detectChanges();
-        break;
+      })
+    );
 
-      case "joined_lobby":
-        this.players.clear();
-        const currentPlayer: Ducker = {
-          connectionId: 'self',
-          name: this.duckerName,
-          speed: 0
-        };
-        this.players.set('self', currentPlayer);
-        
-        message.ConnectedPlayers.forEach((ducker: any) => {
-          const player: Ducker = {
-            connectionId: ducker.ConnectionId,
-            name: ducker.DuckerName,
-            speed: ducker.Speed
-          };
-          this.players.set(ducker.ConnectionId, player);
-        });
-        this.cdr.detectChanges();
-        break;
-
-      case "player_joined":
-        const newPlayer: Ducker = {
-          connectionId: message.Player.ConnectionId,
-          name: message.Player.DuckerName,
-          speed: message.Player.Speed
-        };
-        this.players.set(message.Player.ConnectionId, newPlayer);
-        this.cdr.detectChanges();
-        break;
-
-      case "player_left":
-        this.players.delete(message.ConnectionId);
-        this.cdr.detectChanges();
-        break;
-
-      case "start_game":
-        const duckers: Ducker[] = message.Players.map((p: any) => ({
-          connectionId: p.ConnectionId,
-          name: p.DuckerName,
-          speed: p.Speed
-        }));
+    // 3. Subscribe to Game Start event
+    this.subs.add(
+      this.socketService.gameStarted$.subscribe(duckers => {
         this.gameStarted.emit(duckers);
-        break;
-
-      default:
-        console.warn("Unknown message type:", message.Type);
-    }
+      })
+    );
   }
 
-  private sendWhenOpen(payload: object) {
-    if (!this.ws) return;
+  ngOnDestroy(): void {
+    // Clean up listeners when component is destroyed
+    this.subs.unsubscribe();
+  }
 
-    if (this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(payload));
+  // --- Methods called by HTML buttons ---
+
+  public CreateGame() {
+    this.socketService.createGame();
+  }
+
+  public JoinGame() {
+    if (this.gamePin && this.duckerName) {
+      this.socketService.joinGame(this.gamePin, this.duckerName);
     } else {
-      this.ws.addEventListener("open", () => {
-        this.ws?.send(JSON.stringify(payload));
-      }, { once: true });
+      console.warn("Name and Pin required");
     }
   }
 
   public StartGame() {
-    this.sendWhenOpen({ type: "start_game", LobbyCode: +this.newGamePin });
+    // Use the local newGamePin that was updated via subscription
+    if (this.newGamePin) {
+      this.socketService.startGame(this.newGamePin);
+    }
   }
 
-  public CreateGame() {
-    this.setupWebSocket();
-    this.sendWhenOpen({ type: "create_lobby", LobbyType: "DuckRace" });
-    this.players.clear();
-    this.cdr.detectChanges();
-  }
-
-  public JoinGame() {
-    this.setupWebSocket();
-    this.sendWhenOpen({
-      type: "join_lobby",
-      LobbyCode: +this.gamePin,
-      DuckerName: this.duckerName
-    });
-  }
-
+  // --- Getter expected by HTML ---
+  
   get playersArray(): Ducker[] {
-    return Array.from(this.players.values());
+    return this._currentPlayers;
   }
 }
