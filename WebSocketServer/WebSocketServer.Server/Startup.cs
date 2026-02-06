@@ -39,6 +39,12 @@ public class Startup
         {
             endpoints.MapControllers();
             
+            endpoints.MapGet("/health", async context =>
+            {
+                context.Response.StatusCode = 200;
+                await context.Response.WriteAsync("healthy");
+            });
+
             endpoints.Map("/ws", async context =>
             {
                 if (context.WebSockets.IsWebSocketRequest)
