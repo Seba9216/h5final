@@ -67,7 +67,6 @@ public class StartGameResponse
 public class StoryPointsMessage : WebSocketMessage
 {
     public string ConnectionId { get; set; } = string.Empty;
-    public string StoryPoints { get; set; } = string.Empty;
 }
 
 public class StoryPointsResponse
