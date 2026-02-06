@@ -1,1 +1,83 @@
-<app-connection-area-poker></app-connection-area-poker>
+@if (gameHasStarted) {
+<div class="pp-room">
+  <!-- Poker Table -->
+  <div class="pp-table">
+    <span class="pp-table-text">Planning Poker</span>
+    @if (!revealed) {
+      <button class="btn btn-warning btn-lg pp-action-btn" (click)="revealCards()" [disabled]="votes.size === 0">
+        <i class="bi bi-eye-fill"></i> Reveal Cards
+      </button>
+    } @else {
+      <button class="btn btn-light btn-lg pp-action-btn" (click)="newRound()">
+        <i class="bi bi-arrow-clockwise"></i> New Round
+      </button>
+    }
+  </div>
+
+  <!-- Duck Seats -->
+  <div class="pp-seats">
+    @for (duck of players; track duck.connectionId; let i = $index) {
+      <div class="pp-seat" [style.--flip-delay]="(i * 0.15) + 's'">
+        <!-- Poker Card -->
+        <div class="pp-card" [class.voted]="hasVoted(duck)" [class.revealed]="revealed">
+          <div class="pp-card-inner">
+            <div class="pp-card-back">
+              <div class="pp-card-pattern"></div>
+            </div>
+            <div class="pp-card-front">
+              <span>{{ getVote(duck) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pixel Art Duck SVG (front-facing, 11x13 grid) -->
+        <svg viewBox="0 0 11 13" width="55" height="65" shape-rendering="crispEdges"
+             class="pp-duck" [class.celebrating]="revealed"
+             [style.--duck-delay]="(i * 0.3) + 's'">
+          <!-- Head -->
+          <rect x="4" y="0" width="3" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="3" y="1" width="5" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="2" y="2" width="7" height="1" [attr.fill]="getDuckColor(i)"/>
+          <!-- Eyes -->
+          <rect x="2" y="3" width="1" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="3" y="3" width="1" height="1" fill="#111"/>
+          <rect x="4" y="3" width="3" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="7" y="3" width="1" height="1" fill="#111"/>
+          <rect x="8" y="3" width="1" height="1" [attr.fill]="getDuckColor(i)"/>
+          <!-- Cheeks -->
+          <rect x="2" y="4" width="7" height="1" [attr.fill]="getDuckColor(i)"/>
+          <!-- Beak -->
+          <rect x="3" y="5" width="1" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="4" y="5" width="3" height="1" fill="#F67D23"/>
+          <rect x="7" y="5" width="1" height="1" [attr.fill]="getDuckColor(i)"/>
+          <!-- Body -->
+          <rect x="2" y="6" width="7" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="1" y="7" width="9" height="2" [attr.fill]="getDuckColor(i)"/>
+          <rect x="2" y="9" width="7" height="1" [attr.fill]="getDuckColor(i)"/>
+          <rect x="3" y="10" width="5" height="1" [attr.fill]="getDuckColor(i)"/>
+          <!-- Feet -->
+          <rect x="2" y="12" width="2" height="1" fill="#F67D23"/>
+          <rect x="7" y="12" width="2" height="1" fill="#F67D23"/>
+        </svg>
+
+        <span class="pp-duck-name">{{ duck.name }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Vote Selection Panel -->
+  @if (!revealed) {
+    <div class="pp-vote-panel">
+      <div class="pp-vote-options">
+        @for (val of pokerValues; track val) {
+          <button class="pp-vote-btn" [class.selected]="myVote === val" (click)="selectVote(val)">
+            {{ val }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>
+} @else {
+  <app-connection-area-poker (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area-poker>
+}

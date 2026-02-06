@@ -90,3 +90,209 @@
   }
 }
 
+/* ========== Planning Poker ========== */
+
+.pp-room {
+  padding: 1.5rem 1rem 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  min-height: 80vh;
+}
+
+.pp-table {
+  background: radial-gradient(ellipse at center, #35a85a 0%, #1e7a3e 100%);
+  border: 6px solid #5c3a1e;
+  border-radius: 120px;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25),
+              inset 0 2px 12px rgba(255,255,255,0.1);
+  min-width: 280px;
+}
+
+.pp-table-text {
+  color: rgba(255,255,255,0.3);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.pp-action-btn {
+  border-radius: 2rem;
+  padding: 0.5rem 2rem;
+  font-weight: 600;
+}
+
+/* Duck seats */
+.pp-seats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.pp-seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Poker card with 3D flip */
+.pp-card {
+  perspective: 800px;
+  width: 50px;
+  height: 68px;
+}
+
+.pp-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: var(--flip-delay, 0s);
+}
+
+.pp-card.revealed .pp-card-inner {
+  transform: rotateY(180deg);
+}
+
+.pp-card-back,
+.pp-card-front {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 6px;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-card-back {
+  background: #46178f;
+}
+
+.pp-card-pattern {
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.08) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+.pp-card-front {
+  transform: rotateY(180deg);
+  background: #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #46178f;
+}
+
+.pp-card:not(.voted) {
+  opacity: 0.3;
+}
+
+.pp-card.voted:not(.revealed) {
+  animation: pp-card-place 0.35s ease;
+}
+
+@keyframes pp-card-place {
+  0% { transform: translateY(-20px) scale(0.85); opacity: 0.5; }
+  60% { transform: translateY(4px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Pixel art duck animations */
+.pp-duck {
+  animation: pp-duck-idle 2.5s ease-in-out infinite;
+  animation-delay: var(--duck-delay, 0s);
+}
+
+.pp-duck.celebrating {
+  animation: pp-duck-celebrate 0.4s ease-in-out 4;
+  animation-delay: var(--flip-delay, 0s);
+}
+
+@keyframes pp-duck-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes pp-duck-celebrate {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-15deg) translateY(-5px); }
+  75% { transform: rotate(15deg) translateY(-5px); }
+}
+
+.pp-duck-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #555;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Vote panel (fixed bottom) */
+.pp-vote-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 2px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+
+.pp-vote-options {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pp-vote-btn {
+  width: 48px;
+  height: 64px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #46178f;
+    transform: translateY(-6px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+  }
+
+  &.selected {
+    background: #46178f;
+    color: #fff;
+    border-color: #46178f;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(70,23,143,0.3);
+  }
+}
+
