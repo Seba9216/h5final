@@ -70,11 +70,24 @@ public class LobbyManager : ILobbyManager
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
         {
             return lobby.Players
-                .Select(p => new Ducker(p.Key, p.Value))
+                .Select(p => CreateDuckerForLobbyType(lobby.LobbyType, p.Key, p.Value))
                 .ToList();
         }
 
         return new List<Ducker>();
+    }
+
+    private Ducker CreateDuckerForLobbyType(LobbyType lobbyType, string connectionId, string duckerName)
+    {
+        switch (lobbyType)
+        {
+            case LobbyType.DuckRace:
+                return new RacerDucker(connectionId, duckerName);
+            case LobbyType.PlanningPoker:
+                return new PokerDucker(connectionId, duckerName);
+            default:
+                return null;
+        }
     }
 
     public int? GetLobbyCodeForConnection(string connectionId)

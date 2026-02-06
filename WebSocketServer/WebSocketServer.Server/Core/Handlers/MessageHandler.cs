@@ -26,7 +26,7 @@ public class MessageHandler : IMessageHandler
 
     public async Task HandleMessageAsync(string connectionId, string messageType, string messageJson)
     {
-        _logger.LogInformation("Handling message type '{MessageType}' from {ConnectionId}", 
+        _logger.LogInformation("Handling message type '{MessageType}' from {ConnectionId}",
             messageType, connectionId);
 
         switch (messageType)
@@ -45,7 +45,9 @@ public class MessageHandler : IMessageHandler
             case "start_game":
                 await StartGameAsync(connectionId, messageJson);
                 break;
-
+            case "story_points":
+                await HandleStoryPointAsync(connectionId, messageJson);
+                break;
             default:
                 await HandleEchoAsync(connectionId, messageJson);
                 break;
@@ -81,7 +83,7 @@ public class MessageHandler : IMessageHandler
         }
 
         var lobbyCode = _lobbyManager.CreateLobby(connectionId, lobbyType);
-        
+
         var response = new LobbyCreatedResponse
         {
             LobbyCode = lobbyCode
@@ -96,7 +98,7 @@ public class MessageHandler : IMessageHandler
         try
         {
             var joinMessage = JsonSerializer.Deserialize<JoinLobbyMessage>(messageJson);
-            
+
             if (joinMessage == null || string.IsNullOrWhiteSpace(joinMessage.DuckerName))
             {
                 await SendErrorAsync(connectionId, "Invalid join lobby request");
@@ -104,8 +106,8 @@ public class MessageHandler : IMessageHandler
             }
 
             var joined = _lobbyManager.JoinLobby(
-                connectionId, 
-                joinMessage.LobbyCode, 
+                connectionId,
+                joinMessage.LobbyCode,
                 joinMessage.DuckerName
             );
 
@@ -144,20 +146,20 @@ public class MessageHandler : IMessageHandler
     private async Task NotifyLobbyPlayersAsync(string newPlayerConnectionId, int lobbyCode)
     {
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
-        
+
         var newPlayer = playersInLobby.FirstOrDefault(p => p.ConnectionId == newPlayerConnectionId);
         if (newPlayer == null)
         {
-            _logger.LogWarning("Could not find player with ConnectionId {ConnectionId} in lobby {LobbyCode}", 
+            _logger.LogWarning("Could not find player with ConnectionId {ConnectionId} in lobby {LobbyCode}",
                 newPlayerConnectionId, lobbyCode);
             return;
         }
-        
+
         var playerJoinedResponse = new PlayerJoinedResponse
         {
             Player = newPlayer
         };
-        
+
         var responseJson = JsonSerializer.Serialize(playerJoinedResponse);
 
         foreach (var player in playersInLobby)
@@ -171,7 +173,7 @@ public class MessageHandler : IMessageHandler
         var hostId = _lobbyManager.GetLobbyHostId(lobbyCode);
         if (!string.IsNullOrEmpty(hostId) && hostId != newPlayerConnectionId)
         {
-            await _connectionManager.SendAsync(hostId, responseJson);   
+            await _connectionManager.SendAsync(hostId, responseJson);
         }
     }
 
@@ -194,12 +196,12 @@ public class MessageHandler : IMessageHandler
     private async Task NotifyPlayerLeftAsync(int lobbyCode, string connectionId)
     {
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
-        
+
         var playerLeftResponse = new PlayerLeftResponse
         {
             ConnectionId = connectionId
         };
-        
+
         var responseJson = JsonSerializer.Serialize(playerLeftResponse);
 
         foreach (var player in playersInLobby)
@@ -232,7 +234,12 @@ public class MessageHandler : IMessageHandler
         if (started)
         {
             var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode);
-            playersInLobby[Random.Shared.Next(playersInLobby.Count)].Speed = Constants.DuckerMinSpeed - 5;
+
+            var randomDucker = playersInLobby[Random.Shared.Next(playersInLobby.Count)];
+            if (randomDucker is RacerDucker racerDucker)
+            {
+                racerDucker.Speed = Constants.DuckerMinSpeed - 5;
+            }
 
             var startGameResponse = new StartGameResponse
             {
@@ -240,7 +247,7 @@ public class MessageHandler : IMessageHandler
             };
 
             var responseJson = JsonSerializer.Serialize(startGameResponse);
-            
+
             foreach (var player in playersInLobby)
             {
                 await _connectionManager.SendAsync(player.ConnectionId, responseJson);
@@ -257,6 +264,58 @@ public class MessageHandler : IMessageHandler
 
             var responseJson = JsonSerializer.Serialize(errorResponse);
             await _connectionManager.SendAsync(connectionId, responseJson);
+        }
+    }
+
+    private async Task HandleStoryPointAsync(string connectionId, string message)
+    {
+        StoryPointsResponse storyPointsResponse;
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        try
+        {
+            storyPointsResponse = JsonSerializer.Deserialize<StoryPointsResponse>(message);
+            if (storyPointsResponse == null)
+            {
+                throw new JsonException("Deserialized StoryPointsResponse is null");
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Error parsing story points message from {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "Invalid message format");
+            return;
+        }
+
+        var storyPointUpdate = new StoryPointsMessage
+        {
+            ConnectionId = connectionId,
+            StoryPoints = storyPointsResponse.StoryPoints
+        };
+
+        var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
+        if (lobbyCode == null)
+        {
+            _logger.LogWarning("Could not find lobby for ConnectionId {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "You are not in a lobby");
+            return;
+        }
+
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
+        if (playersInLobby == null)
+        {
+            _logger.LogWarning("Could not find players for lobby code {LobbyCode}", lobbyCode);
+            await SendErrorAsync(connectionId, "Lobby not found");
+            return;
+        }
+
+        var responseJson = JsonSerializer.Serialize(storyPointUpdate);
+        foreach (var player in playersInLobby)
+        {
+            await _connectionManager.SendAsync(player.ConnectionId, responseJson);
         }
     }
 }

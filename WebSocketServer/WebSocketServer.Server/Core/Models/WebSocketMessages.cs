@@ -63,3 +63,15 @@ public class StartGameResponse
     public string Type => "start_game";
     public List<Ducker> Players { get; set; } = new();
 }
+
+public class StoryPointsMessage : WebSocketMessage
+{
+    public string ConnectionId { get; set; } = string.Empty;
+    public string StoryPoints { get; set; } = string.Empty;
+}
+
+public class StoryPointsResponse
+{
+    public string Type => "story_points";
+    public string StoryPoints { get; set; } = string.Empty;
+}
