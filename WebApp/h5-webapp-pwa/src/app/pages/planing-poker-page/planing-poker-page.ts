@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ConnectionAreaPoker } from '../../shared-components/connection-area-poker/connection-area-poker';
 import { Ducker } from '../../../models/duckrace/ducker';
+import { ConnectionArea } from '../../shared-components/connection-area/connection-area';
+import { GameSocketService } from '../../services/game-socket-service';
 
 @Component({
   selector: 'app-planing-poker-page',
-  imports: [ConnectionAreaPoker],
+  imports: [ConnectionArea],
   templateUrl: './planing-poker-page.html',
 })
 export class PlaningPokerPage {
@@ -20,7 +21,10 @@ export class PlaningPokerPage {
     '#CE93D8', '#EF5350', '#FFB74D', '#80CBC4'
   ];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef,
+        private socketService: GameSocketService
+    
+  ) {}
 
   onGameStartedLoadPlayers(started: Ducker[]) {
     this.players = started;
@@ -36,18 +40,7 @@ export class PlaningPokerPage {
   }
 
   selectVote(value: string) {
-    this.myVote = value;
-    if (this.players.length > 0 && this.players[0].connectionId) {
-      this.votes.set(this.players[0].connectionId, value);
-    }
-    // Simulate other players voting for demo
-    for (let i = 1; i < this.players.length; i++) {
-      const id = this.players[i].connectionId;
-      if (id && !this.votes.has(id)) {
-        const idx = Math.floor(Math.random() * (this.pokerValues.length - 1));
-        this.votes.set(id, this.pokerValues[idx]);
-      }
-    }
+    this.socketService.sendStoryPoints(value);
   }
 
   hasVoted(player: Ducker): boolean {
