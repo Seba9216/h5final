@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using WebSocketServer.Core.Connections;
+using WebSocketServer.Core.context;
 using WebSocketServer.Core.Handlers;
 using WebSocketServer.Core.LobbyManager;
 
