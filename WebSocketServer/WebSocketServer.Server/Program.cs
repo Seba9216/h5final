@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using WebSocketServer;
-using WebSocketServer.Core.context;
-
+using WebSocketServer.server.context;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DuckingContext>
