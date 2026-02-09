@@ -80,10 +80,12 @@ export class GameSocketService {
           });
         });
         
-
+      
         this.updatePlayers();
         break;
+      case "story_points": 
 
+      break;
       case "player_joined":
         this.playersMap.set(message.Player.ConnectionId, {
           connectionId: message.Player.ConnectionId,

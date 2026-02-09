@@ -14,6 +14,22 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+
+
 
   frontend:
     build:
@@ -24,3 +40,5 @@ services:
     depends_on:
       websocket-server:
         condition: service_healthy
+volumes:
+  mysql_data:
