@@ -5,14 +5,14 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-register-page',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="login-container">
-      <div class="login-card">
-        <h1>Login</h1>
-        <form (ngSubmit)="onLogin()">
+    <div class="register-container">
+      <div class="register-card">
+        <h1>Create Account</h1>
+        <form (ngSubmit)="onRegister()">
           <div class="form-group">
             <label for="username">Username</label>
             <input 
@@ -21,7 +21,7 @@ import { AuthService } from '../../services/auth.service';
               [(ngModel)]="username" 
               name="username" 
               required
-              placeholder="Enter username"
+              placeholder="Choose a username"
             />
           </div>
           <div class="form-group">
@@ -32,24 +32,38 @@ import { AuthService } from '../../services/auth.service';
               [(ngModel)]="password" 
               name="password" 
               required
-              placeholder="Enter password"
+              placeholder="Choose a password"
+            />
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              [(ngModel)]="confirmPassword" 
+              name="confirmPassword" 
+              required
+              placeholder="Confirm your password"
             />
           </div>
           <div *ngIf="errorMessage" class="error-message">
             {{ errorMessage }}
           </div>
+          <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
           <button type="submit" [disabled]="isLoading">
-            {{ isLoading ? 'Logging in...' : 'Login' }}
+            {{ isLoading ? 'Creating Account...' : 'Register' }}
           </button>
         </form>
-        <div class="register-link">
-          Don't have an account? <a routerLink="/register">Register here</a>
+        <div class="login-link">
+          Already have an account? <a routerLink="/login">Login here</a>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .login-container {
+    .register-container {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -57,7 +71,7 @@ import { AuthService } from '../../services/auth.service';
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
-    .login-card {
+    .register-card {
       background: white;
       padding: 2rem;
       border-radius: 12px;
@@ -128,27 +142,38 @@ import { AuthService } from '../../services/auth.service';
       text-align: center;
     }
 
-    .register-link {
+    .success-message {
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .login-link {
       text-align: center;
       margin-top: 1.5rem;
       color: #555;
     }
 
-    .register-link a {
+    .login-link a {
       color: #667eea;
       text-decoration: none;
       font-weight: 600;
     }
 
-    .register-link a:hover {
+    .login-link a:hover {
       text-decoration: underline;
     }
   `]
 })
-export class LoginPage {
+export class RegisterPage {
   username = '';
   password = '';
+  confirmPassword = '';
   errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
   constructor(
@@ -156,12 +181,29 @@ export class LoginPage {
     private router: Router
   ) {}
 
-  async onLogin() {
+  async onRegister() {
     this.errorMessage = '';
+    this.successMessage = '';
+
+    if (!this.username || !this.password || !this.confirmPassword) {
+      this.errorMessage = 'All fields are required';
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
+      return;
+    }
+
+    if (this.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters';
+      return;
+    }
+
     this.isLoading = true;
 
     try {
-      const response = await fetch('http://localhost:5057/api/user/login', {
+      const response = await fetch('http://localhost:5057/api/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -174,15 +216,17 @@ export class LoginPage {
 
       if (response.ok) {
         const data = await response.json();
-        this.authService.login(data.id, data.userName);
-        this.router.navigate(['/']);
+        this.successMessage = 'Account created successfully! Redirecting to login...';
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
       } else {
         const error = await response.text();
-        this.errorMessage = error || 'Invalid username or password';
+        this.errorMessage = error || 'Failed to create account';
       }
     } catch (error) {
       this.errorMessage = 'Failed to connect to server';
-      console.error('Login error:', error);
+      console.error('Registration error:', error);
     } finally {
       this.isLoading = false;
     }

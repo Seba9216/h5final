@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using WebSocketServer.Core.Connections;
-using WebSocketServer.Core.context;
 using WebSocketServer.Core.Handlers;
 using WebSocketServer.Core.LobbyManager;
 
@@ -11,7 +10,18 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddApplicationPart(typeof(Startup).Assembly);
+        
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
         
         services.AddSingleton<IWebSocketConnectionManager, WebSocketConnectionManager>();
         services.AddSingleton<ILobbyManager, LobbyManager>();
@@ -27,6 +37,7 @@ public class Startup
         }
 
         app.UseRouting();
+        app.UseCors("AllowAll");
 
         var webSocketOptions = new WebSocketOptions
         {
@@ -38,7 +49,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            endpoints.MapControllers().RequireCors("AllowAll");
             
             endpoints.MapGet("/health", async context =>
             {

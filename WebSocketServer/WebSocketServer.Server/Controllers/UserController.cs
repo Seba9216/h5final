@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebSocketServer.Core.context;
@@ -7,6 +8,7 @@ namespace WebSocketServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableCors("AllowAll")]
 public class UserController : ControllerBase
 {
     private readonly DuckingContext _dbContext;

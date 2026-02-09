@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using WebSocketServer.Core.context;
 
-namespace WebSocketServer.server.context;
+namespace WebSocketServer.Core.context;
 
 public class DuckingContext : DbContext
 {
