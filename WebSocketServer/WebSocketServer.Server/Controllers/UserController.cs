@@ -26,7 +26,7 @@ public class UserController : ControllerBase
             return BadRequest("Invalid user data");
         }
 
-        _dbContext.users.Add(user);
+        _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new { id = user.Id, message = "User created successfully" });
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
-        var user = await _dbContext.users.FindAsync(id);
+        var user = await _dbContext.Users.FindAsync(id);
         
         if (user == null)
         {
@@ -53,7 +53,7 @@ public class UserController : ControllerBase
             return BadRequest("Username and password are required");
         }
 
-        var user = await _dbContext.users
+        var user = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.UserName == request.UserName && u.Password == request.Password);
 
         if (user == null)
