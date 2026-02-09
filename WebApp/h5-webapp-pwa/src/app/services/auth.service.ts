@@ -11,7 +11,6 @@ export class AuthService {
     // Check localStorage for existing session
     const token = localStorage.getItem('authToken');
     this.isAuthenticated = !!token;
-    console.log('AuthService initialized - token:', token, 'isAuthenticated:', this.isAuthenticated);
   }
 
   login(userId: number, userName: string): void {

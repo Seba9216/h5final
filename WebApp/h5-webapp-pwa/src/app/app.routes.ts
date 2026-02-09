@@ -4,7 +4,6 @@ import { PlaningPokerPage } from './pages/planing-poker-page/planing-poker-page'
 import { DuckRacePage } from './pages/duck-race-page/duck-race-page';
 import { authGuard } from './guards/auth.guard';
 
-console.log('Routes file loaded - authGuard imported:', authGuard);
 
 export const routes: Routes = [
     {
@@ -27,5 +26,3 @@ export const routes: Routes = [
         canActivate: [authGuard]
     }
 ];
-
-console.log('🔥 Routes configured:', routes);
