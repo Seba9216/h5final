@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Ducker } from '../../../models/duckrace/ducker';
 import { ConnectionArea } from '../../shared-components/connection-area/connection-area';
 import { GameSocketService } from '../../services/game-socket-service';
@@ -8,7 +8,7 @@ import { GameSocketService } from '../../services/game-socket-service';
   imports: [ConnectionArea],
   templateUrl: './planing-poker-page.html',
 })
-export class PlaningPokerPage {
+export class PlaningPokerPage implements OnInit {
   gameHasStarted = false;
   players: Ducker[] = [];
   revealed = false;
@@ -24,6 +24,18 @@ export class PlaningPokerPage {
     private cdr: ChangeDetectorRef,
     private socketService: GameSocketService
   ) {}
+ngOnInit() {
+  this.socketService.players$.subscribe(updatedPlayers => {
+    if (!this.gameHasStarted) return;
+
+    this.players = this.players.map(p => {
+      const updated = updatedPlayers.find(u => u.connectionId === p.connectionId);
+      return updated ? { ...p, storyPoints: updated.storyPoints } : p;
+    });
+
+    this.cdr.markForCheck();
+  });
+}
 
   onGameStartedLoadPlayers(started: Ducker[]) {
     this.players = started.map(p => ({
@@ -44,6 +56,7 @@ export class PlaningPokerPage {
   selectVote(value: string) {
     this.myVote = value;
     this.socketService.sendStoryPoints(value);
+    console.log(this.players);
   }
 
   hasVoted(player: Ducker): boolean {

@@ -39,8 +39,8 @@ export class GameSocketService {
   }
 
   public sendStoryPoints(storyPoints: string){
-    this.setupWebSocket();
     this.sendWhenOpen({type: "story_points", StoryPoints: storyPoints })
+    this.updatePlayers();
   }
 
   public startGame(gamePin: string) {
@@ -86,14 +86,15 @@ export class GameSocketService {
         this.updatePlayers();
         break;
 case "story_points": {
-  const player = this.playersMap.get(message.Player.ConnectionId);
+  const player = this.playersMap.get(message.ConnectionId);
 
   if (player) {
-    this.playersMap.set(message.Player.ConnectionId, {
+    this.playersMap.set(message.ConnectionId, {
       ...player,
       storyPoints: message.StoryPoints,
     });
   }
+  this.updatePlayers();
   break;
 }
 
