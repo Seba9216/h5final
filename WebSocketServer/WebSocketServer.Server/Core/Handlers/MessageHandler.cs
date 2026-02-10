@@ -1,6 +1,8 @@
 using System.Text.Json;
+using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.Configuration;
 using WebSocketServer.Core.Connections;
+using WebSocketServer.Core.context;
 using WebSocketServer.Core.LobbyManager;
 using WebSocketServer.Core.Models;
 
@@ -11,15 +13,21 @@ public class MessageHandler : IMessageHandler
     private readonly IWebSocketConnectionManager _connectionManager;
     private readonly ILobbyManager _lobbyManager;
     private readonly ILogger<MessageHandler> _logger;
+    private readonly DuckingContext _dbContext;
+    private readonly ITokenService _tokenService;
 
     public MessageHandler(
         IWebSocketConnectionManager connectionManager,
         ILobbyManager lobbyManager,
-        ILogger<MessageHandler> logger)
+        ILogger<MessageHandler> logger,
+        DuckingContext dbContext,
+        ITokenService tokenService)
     {
         _connectionManager = connectionManager;
         _lobbyManager = lobbyManager;
         _logger = logger;
+        _dbContext = dbContext;
+        _tokenService = tokenService;
 
         _lobbyManager.PlayerLeftLobby += NotifyPlayerLeftAsync;
     }
@@ -28,6 +36,22 @@ public class MessageHandler : IMessageHandler
     {
         _logger.LogInformation("Handling message type '{MessageType}' from {ConnectionId}",
             messageType, connectionId);
+
+        if (messageType != "echo")
+        {
+            try
+            {
+                var baseMessage = JsonSerializer.Deserialize<WebSocketMessage>(messageJson);
+                if (baseMessage?.Token == null || !_tokenService.ValidateToken(baseMessage.Token))
+                {
+                    _logger.LogWarning("Invalid or missing auth token from {ConnectionId}", connectionId);
+                    await SendErrorAsync(connectionId, "Authentication required. Please login first.");
+                    return;
+                }
+            }
+            catch (JsonException)
+            {}
+        }
 
         switch (messageType)
         {
@@ -47,6 +71,9 @@ public class MessageHandler : IMessageHandler
                 break;
             case "story_points":
                 await HandleStoryPointAsync(connectionId, messageJson);
+                break;
+            case "game_finished":
+                await HandleGameFinishedAsync(connectionId, messageJson);
                 break;
             default:
                 await HandleEchoAsync(connectionId, messageJson);
@@ -105,10 +132,18 @@ public class MessageHandler : IMessageHandler
                 return;
             }
 
+            // Resolve userId from auth token
+            int? userId = null;
+            if (!string.IsNullOrEmpty(joinMessage.Token))
+            {
+                userId = _tokenService.GetUserIdFromToken(joinMessage.Token);
+            }
+
             var joined = _lobbyManager.JoinLobby(
                 connectionId,
                 joinMessage.LobbyCode,
-                joinMessage.DuckerName
+                joinMessage.DuckerName,
+                userId
             );
 
             if (joined)
@@ -317,5 +352,34 @@ public class MessageHandler : IMessageHandler
         {
             await _connectionManager.SendAsync(player.ConnectionId, responseJson);
         }
+    }
+
+    private async Task HandleGameFinishedAsync(string connectionId, string message)
+    {
+        var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
+        if (lobbyCode == null)
+        {
+            _logger.LogWarning("Could not find lobby for ConnectionId {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "You are not in a lobby");
+            return;
+        }
+
+        var hostId = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        if (hostId != connectionId)
+        {
+            _logger.LogWarning("ConnectionId {ConnectionId} attempted to finish game but is not the host", connectionId);
+            await SendErrorAsync(connectionId, "Only the host can finish the game");
+            return;
+        }
+
+        _dbContext.Games.Add(new DuckingGame
+        {
+            Players = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value)
+                .Select(p => new DuckingUser
+                {
+                    UserName = "ikke implementeret"
+                })
+                .ToList()
+        });
     }
 }

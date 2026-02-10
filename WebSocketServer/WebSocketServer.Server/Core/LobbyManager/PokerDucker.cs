@@ -4,8 +4,8 @@ public class PokerDucker : Ducker
 {
     public string? StoryPoints;
 
-    public PokerDucker(string connectionId, string duckerName) 
-        : base(connectionId, duckerName)
+    public PokerDucker(string connectionId, string duckerName, int? userId = null) 
+        : base(connectionId, duckerName, userId)
     {
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.context;
 using WebSocketServer.Models;
 
@@ -12,10 +13,12 @@ namespace WebSocketServer.Controllers;
 public class UserController : ControllerBase
 {
     private readonly DuckingContext _dbContext;
+    private readonly ITokenService _tokenService;
 
-    public UserController(DuckingContext dbContext)
+    public UserController(DuckingContext dbContext, ITokenService tokenService)
     {
         _dbContext = dbContext;
+        _tokenService = tokenService;
     }
 
     [HttpPost]
@@ -29,7 +32,9 @@ public class UserController : ControllerBase
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new { id = user.Id, message = "User created successfully" });
+        var token = _tokenService.GenerateToken(user.Id, user.UserName);
+
+        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new { id = user.Id, token, message = "User created successfully" });
     }
 
     [HttpGet("{id}")]
@@ -61,6 +66,8 @@ public class UserController : ControllerBase
             return Unauthorized("Invalid username or password");
         }
 
-        return Ok(new { id = user.Id, userName = user.UserName, message = "Login successful" });
+        var token = _tokenService.GenerateToken(user.Id, user.UserName);
+
+        return Ok(new { id = user.Id, userName = user.UserName, token, message = "Login successful" });
     }
 }

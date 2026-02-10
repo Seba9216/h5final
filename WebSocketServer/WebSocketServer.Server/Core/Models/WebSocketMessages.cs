@@ -5,6 +5,7 @@ namespace WebSocketServer.Core.Models;
 public class WebSocketMessage
 {
     public string Type { get; set; } = string.Empty;
+    public string? Token { get; set; }
 }
 
 public class BroadcastMessage : WebSocketMessage

@@ -5,8 +5,8 @@ public class RacerDucker : Ducker
 {
     public int Speed { get; set; }
 
-    public RacerDucker(string connectionId, string duckerName) 
-        : base(connectionId, duckerName)
+    public RacerDucker(string connectionId, string duckerName, int? userId = null) 
+        : base(connectionId, duckerName, userId)
     {
         Speed = Random.Shared.Next(Constants.DuckerMinSpeed, Constants.DuckerMaxSpeed);
     }
