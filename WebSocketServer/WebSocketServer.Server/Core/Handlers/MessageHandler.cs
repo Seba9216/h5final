@@ -42,8 +42,13 @@ public class MessageHandler : IMessageHandler
         {
             try
             {
-                var baseMessage = JsonSerializer.Deserialize<WebSocketMessage>(messageJson);
-                if (baseMessage?.Token == null || !_tokenService.ValidateToken(baseMessage.Token))
+                using var doc = JsonDocument.Parse(messageJson);
+                var root = doc.RootElement;
+                var token = root.TryGetProperty("Token", out var tokenElement)
+                    ? tokenElement.GetString()
+                    : null;
+
+                if (token == null || !_tokenService.ValidateToken(token))
                 {
                     _logger.LogWarning("Invalid or missing auth token from {ConnectionId}", connectionId);
                     await SendErrorAsync(connectionId, "Authentication required. Please login first.");
@@ -305,7 +310,7 @@ public class MessageHandler : IMessageHandler
 
     private async Task HandleStoryPointAsync(string connectionId, string message)
     {
-        StoryPointsResponse storyPointsResponse;
+        StoryPointsMessage storyPointsMessage;
         if (string.IsNullOrEmpty(message))
         {
             return;
@@ -313,10 +318,10 @@ public class MessageHandler : IMessageHandler
 
         try
         {
-            storyPointsResponse = JsonSerializer.Deserialize<StoryPointsResponse>(message);
-            if (storyPointsResponse == null)
+            storyPointsMessage = JsonSerializer.Deserialize<StoryPointsMessage>(message);
+            if (storyPointsMessage == null)
             {
-                throw new JsonException("Deserialized StoryPointsResponse is null");
+                throw new JsonException("Deserialized StoryPointsMessage is null");
             }
         }
         catch (JsonException ex)
@@ -326,11 +331,10 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
-        var storyPointUpdate = new StoryPointsMessage
+        var storyPointUpdate = new StoryPointsResponse
         {
-            Type = "story_points",
             ConnectionId = connectionId,
-            StoryPoints = storyPointsResponse.StoryPoints
+            StoryPoints = storyPointsMessage.StoryPoints
         };
 
         var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
