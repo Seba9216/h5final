@@ -42,13 +42,8 @@ public class MessageHandler : IMessageHandler
         {
             try
             {
-                using var doc = JsonDocument.Parse(messageJson);
-                var root = doc.RootElement;
-                var token = root.TryGetProperty("Token", out var tokenElement)
-                    ? tokenElement.GetString()
-                    : null;
-
-                if (token == null || !_tokenService.ValidateToken(token))
+                var baseMessage = JsonSerializer.Deserialize<WebSocketMessage>(messageJson);
+                if (baseMessage?.Token == null || !_tokenService.ValidateToken(baseMessage.Token))
                 {
                     _logger.LogWarning("Invalid or missing auth token from {ConnectionId}", connectionId);
                     await SendErrorAsync(connectionId, "Authentication required. Please login first.");
@@ -310,7 +305,7 @@ public class MessageHandler : IMessageHandler
 
     private async Task HandleStoryPointAsync(string connectionId, string message)
     {
-        StoryPointsMessage storyPointsMessage;
+        StoryPointsResponse storyPointsResponse;
         if (string.IsNullOrEmpty(message))
         {
             return;
@@ -318,10 +313,10 @@ public class MessageHandler : IMessageHandler
 
         try
         {
-            storyPointsMessage = JsonSerializer.Deserialize<StoryPointsMessage>(message);
-            if (storyPointsMessage == null)
+            storyPointsResponse = JsonSerializer.Deserialize<StoryPointsResponse>(message);
+            if (storyPointsResponse == null)
             {
-                throw new JsonException("Deserialized StoryPointsMessage is null");
+                throw new JsonException("Deserialized StoryPointsResponse is null");
             }
         }
         catch (JsonException ex)
@@ -331,10 +326,11 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
-        var storyPointUpdate = new StoryPointsResponse
+        var storyPointUpdate = new StoryPointsMessage
         {
+            Type = "story_points",
             ConnectionId = connectionId,
-            StoryPoints = storyPointsMessage.StoryPoints
+            StoryPoints = storyPointsResponse.StoryPoints
         };
 
         var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
@@ -370,6 +366,15 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
+        var hostId = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        if (hostId != connectionId)
+        {
+            _logger.LogWarning("ConnectionId {ConnectionId} attempted to finish game but is not the host", connectionId);
+            await SendErrorAsync(connectionId, "Only the host can finish the game");
+            return;
+        }
+
+        // Get all players from the lobby
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
         
         // Find DuckingUser entities for players with UserId
