@@ -83,9 +83,18 @@ export class GameSocketService {
       
         this.updatePlayers();
         break;
-      case "story_points": 
+case "story_points": {
+  const player = this.playersMap.get(message.Player.ConnectionId);
 
-      break;
+  if (player) {
+    this.playersMap.set(message.Player.ConnectionId, {
+      ...player,
+      storyPoints: message.StoryPoints,
+    });
+  }
+  break;
+}
+
       case "player_joined":
         this.playersMap.set(message.Player.ConnectionId, {
           connectionId: message.Player.ConnectionId,

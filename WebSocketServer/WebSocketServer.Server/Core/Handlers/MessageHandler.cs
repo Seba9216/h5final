@@ -294,6 +294,7 @@ public class MessageHandler : IMessageHandler
         {
             Type = "story_points",
             ConnectionId = connectionId,
+            StoryPoints = storyPointsResponse.StoryPoints
         };
 
         var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);

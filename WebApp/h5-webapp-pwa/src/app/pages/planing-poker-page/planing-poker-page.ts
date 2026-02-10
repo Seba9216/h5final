@@ -12,7 +12,6 @@ export class PlaningPokerPage {
   gameHasStarted = false;
   players: Ducker[] = [];
   revealed = false;
-  votes = new Map<string, string>();
   myVote: string | null = null;
 
   readonly pokerValues = ['0', '½', '1', '2', '3', '5', '8', '13', '21', '?'];
@@ -21,16 +20,19 @@ export class PlaningPokerPage {
     '#CE93D8', '#EF5350', '#FFB74D', '#80CBC4'
   ];
 
-  constructor(private cdr: ChangeDetectorRef,
-        private socketService: GameSocketService
-    
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private socketService: GameSocketService
   ) {}
 
   onGameStartedLoadPlayers(started: Ducker[]) {
-    this.players = started;
+    this.players = started.map(p => ({
+      ...p,
+      storyPoints: null
+    }));
+
     this.gameHasStarted = true;
     this.revealed = false;
-    this.votes.clear();
     this.myVote = null;
     this.cdr.markForCheck();
   }
@@ -40,15 +42,16 @@ export class PlaningPokerPage {
   }
 
   selectVote(value: string) {
+    this.myVote = value;
     this.socketService.sendStoryPoints(value);
   }
 
   hasVoted(player: Ducker): boolean {
-    return this.votes.has(player.connectionId ?? '');
+    return !!player.storyPoints;
   }
 
   getVote(player: Ducker): string {
-    return this.votes.get(player.connectionId ?? '') ?? '?';
+    return player.storyPoints ?? '?';
   }
 
   revealCards() {
@@ -57,7 +60,14 @@ export class PlaningPokerPage {
 
   newRound() {
     this.revealed = false;
-    this.votes.clear();
     this.myVote = null;
+
+    this.players = this.players.map(p => ({
+      ...p,
+      storyPoints: null
+    }));
   }
+  get hasAnyVotes(): boolean {
+  return this.players.some(p => !!p.storyPoints);
+}
 }
