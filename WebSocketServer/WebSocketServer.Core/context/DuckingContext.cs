@@ -13,6 +13,7 @@ public class DuckingContext : DbContext
     }
 
     public DbSet<DuckingUser> Users { get; set; }
+    public DbSet<DuckingGame> Games { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
