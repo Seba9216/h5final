@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Ducker } from '../../models/duckrace/ducker';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class GameSocketService {
   private gameStartedSubject = new Subject<Ducker[]>();
   public gameStarted$ = this.gameStartedSubject.asObservable();
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   public createGame() {
     this.setupWebSocket();
@@ -76,7 +77,8 @@ export class GameSocketService {
             connectionId: ducker.ConnectionId,
             name: ducker.DuckerName,
             speed: ducker.Speed,
-            storyPoints: null
+            storyPoints: null,
+            userId: ducker.UserId ?? null
           });
         });
         
@@ -91,7 +93,8 @@ export class GameSocketService {
           connectionId: message.Player.ConnectionId,
           name: message.Player.DuckerName,
           speed: message.Player.Speed,
-          storyPoints: null
+          storyPoints: null,
+          userId: message.Player.UserId ?? null
         });
         this.updatePlayers();
         break;
@@ -105,7 +108,9 @@ export class GameSocketService {
         const duckers: Ducker[] = message.Players.map((p: any) => ({
           connectionId: p.ConnectionId,
           name: p.DuckerName,
-          speed: p.Speed
+          speed: p.Speed,
+          storyPoints: null,
+          userId: p.UserId ?? null
         }));
         this.gameStartedSubject.next(duckers);
         break;
@@ -121,11 +126,17 @@ export class GameSocketService {
 
   private sendWhenOpen(payload: object) {
     if (!this.ws) return;
+
+    const message = {
+      ...payload,
+      Token: this.authService.getToken()
+    };
+
     if (this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(payload));
+      this.ws.send(JSON.stringify(message));
     } else {
       this.ws.addEventListener("open", () => {
-        this.ws?.send(JSON.stringify(payload));
+        this.ws?.send(JSON.stringify(message));
       }, { once: true });
     }
   }

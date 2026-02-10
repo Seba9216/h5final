@@ -8,14 +8,13 @@ export class AuthService {
   private isAuthenticated = false;
 
   constructor(private router: Router) {
-    // Check localStorage for existing session
     const token = localStorage.getItem('authToken');
     this.isAuthenticated = !!token;
   }
 
-  login(userId: number, userName: string): void {
+  login(userId: number, userName: string, token: string): void {
     this.isAuthenticated = true;
-    localStorage.setItem('authToken', 'true');
+    localStorage.setItem('authToken', token);
     localStorage.setItem('userId', userId.toString());
     localStorage.setItem('userName', userName);
   }
@@ -30,6 +29,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.isAuthenticated;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
   }
 
   getUserId(): number | null {

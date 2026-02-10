@@ -174,7 +174,7 @@ export class LoginPage {
 
       if (response.ok) {
         const data = await response.json();
-        this.authService.login(data.id, data.userName);
+        this.authService.login(data.id, data.userName, data.token);
         this.router.navigate(['/']);
       } else {
         const error = await response.text();
