@@ -3,6 +3,7 @@ import { ConnectionArea } from '../../shared-components/connection-area/connecti
 import { Ducker } from '../../../models/duckrace/ducker';
 import { RaceFinishDirective } from '../../directives/race-finish-directive';
 import { WinnerModal } from '../../shared-components/winner-modal/winner-modal';
+import { GameSocketService } from '../../services/game-socket-service';
 
 @Component({
   selector: 'app-duck-race-page',
@@ -14,7 +15,7 @@ export class DuckRacePage {
       gameHasStarted: boolean = false;
       players: Ducker[] = [];
 
-      constructor(private cdr: ChangeDetectorRef) {}
+    constructor(private cdr: ChangeDetectorRef, private gameSocketService: GameSocketService) { }
     onGameStartedLoadPlayers(started: Ducker[]) {
     this.players = started;
     console.log('Game started:', this.players);
@@ -22,6 +23,7 @@ export class DuckRacePage {
     this.cdr.markForCheck();
   }
    onDuckFinished(finishedDuck: Ducker){
+    this.gameSocketService.gameFinished();
     this.winnerModal.duckerName = finishedDuck.name;
     this.winnerModal.show();
   }

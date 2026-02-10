@@ -47,6 +47,11 @@ export class GameSocketService {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +gamePin });
   }
 
+  public gameFinished()
+  {
+    this.sendWhenOpen({ type: "game_finished" });
+  }
+
   private setupWebSocket() {
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return; 

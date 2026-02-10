@@ -366,15 +366,6 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
-        var hostId = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
-        if (hostId != connectionId)
-        {
-            _logger.LogWarning("ConnectionId {ConnectionId} attempted to finish game but is not the host", connectionId);
-            await SendErrorAsync(connectionId, "Only the host can finish the game");
-            return;
-        }
-
-        // Get all players from the lobby
         var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
         
         // Find DuckingUser entities for players with UserId
