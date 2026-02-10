@@ -216,10 +216,11 @@ export class RegisterPage {
 
       if (response.ok) {
         const data = await response.json();
-        this.successMessage = 'Account created successfully! Redirecting to login...';
+        this.authService.login(data.id, this.username, data.token);
+        this.successMessage = 'Account created successfully! Redirecting...';
         setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
+          this.router.navigate(['/']);
+        }, 1500);
       } else {
         const error = await response.text();
         this.errorMessage = error || 'Failed to create account';

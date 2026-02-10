@@ -31,7 +31,7 @@ public class LobbyManager : ILobbyManager
         return lobbyCode;
     }
 
-    public bool JoinLobby(string connectionId, int lobbyCode, string duckerName)
+    public bool JoinLobby(string connectionId, int lobbyCode, string duckerName, int? userId = null)
     {
         if (!_lobbies.ContainsKey(lobbyCode))
         {
@@ -49,7 +49,7 @@ public class LobbyManager : ILobbyManager
 
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
         {
-            bool added = lobby.AddPlayer(connectionId, duckerName);
+            bool added = lobby.AddPlayer(connectionId, duckerName, userId);
 
             if (added)
             {
@@ -70,21 +70,21 @@ public class LobbyManager : ILobbyManager
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
         {
             return lobby.Players
-                .Select(p => CreateDuckerForLobbyType(lobby.LobbyType, p.Key, p.Value))
+                .Select(p => CreateDuckerForLobbyType(lobby.LobbyType, p.Key, p.Value.Name, p.Value.UserId))
                 .ToList();
         }
 
         return new List<Ducker>();
     }
 
-    private Ducker CreateDuckerForLobbyType(LobbyType lobbyType, string connectionId, string duckerName)
+    private Ducker CreateDuckerForLobbyType(LobbyType lobbyType, string connectionId, string duckerName, int? userId)
     {
         switch (lobbyType)
         {
             case LobbyType.DuckRace:
-                return new RacerDucker(connectionId, duckerName);
+                return new RacerDucker(connectionId, duckerName, userId);
             case LobbyType.PlanningPoker:
-                return new PokerDucker(connectionId, duckerName);
+                return new PokerDucker(connectionId, duckerName, userId);
             default:
                 return null;
         }

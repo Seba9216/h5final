@@ -1,10 +1,12 @@
 namespace WebSocketServer.Core.LobbyManager;
 
+public record PlayerInfo(string Name, int? UserId);
+
 public class Lobby
 {
     public int Code { get; set; }
     public string HostConnectionId { get; set; } = string.Empty;
-    public Dictionary<string, string> Players { get; set; } = new(); // ConnectionId -> PlayerName
+    public Dictionary<string, PlayerInfo> Players { get; set; } = new(); // ConnectionId -> PlayerInfo
     public DateTime CreatedAt { get; set; }
     public LobbyType LobbyType { get; set; }
     public LobbyStatus Status { get; set; } = LobbyStatus.Waiting;
@@ -18,9 +20,9 @@ public class Lobby
         LobbyType = lobbyType;
     }
 
-    public bool AddPlayer(string connectionId, string playerName)
+    public bool AddPlayer(string connectionId, string playerName, int? userId = null)
     {
-        return Players.TryAdd(connectionId, playerName);
+        return Players.TryAdd(connectionId, new PlayerInfo(playerName, userId));
     }
 
     public bool RemovePlayer(string connectionId)
