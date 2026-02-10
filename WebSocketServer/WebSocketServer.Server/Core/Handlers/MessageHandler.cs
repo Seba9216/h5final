@@ -5,6 +5,7 @@ using WebSocketServer.Core.Connections;
 using WebSocketServer.Core.context;
 using WebSocketServer.Core.LobbyManager;
 using WebSocketServer.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebSocketServer.Core.Handlers;
 
@@ -373,14 +374,31 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
-        _dbContext.Games.Add(new DuckingGame
+        // Get all players from the lobby
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
+        
+        // Find DuckingUser entities for players with UserId
+        var duckingUsers = new List<DuckingUser>();
+        foreach (var player in playersInLobby)
         {
-            Players = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value)
-                .Select(p => new DuckingUser
+            if (player.UserId.HasValue)
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == player.UserId.Value);
+                if (user != null)
                 {
-                    UserName = "ikke implementeret"
-                })
-                .ToList()
-        });
+                    duckingUsers.Add(user);
+                }
+            }
+        }
+
+        // Create and save the game record
+        var game = new DuckingGame
+        {
+            Type = _lobbyManager.GetLobbyType(lobbyCode.Value),
+            Players = duckingUsers
+        };
+
+        _dbContext.Games.Add(game);
+        await _dbContext.SaveChangesAsync();
     }
 }

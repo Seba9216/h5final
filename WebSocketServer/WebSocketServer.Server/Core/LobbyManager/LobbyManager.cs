@@ -77,6 +77,16 @@ public class LobbyManager : ILobbyManager
         return new List<Ducker>();
     }
 
+    public LobbyType GetLobbyType(int lobbyCode)
+    {
+        if (_lobbies.TryGetValue(lobbyCode, out var lobby))
+        {
+            return lobby.LobbyType;
+        }
+
+        return LobbyType.Unknown;
+    }
+
     private Ducker CreateDuckerForLobbyType(LobbyType lobbyType, string connectionId, string duckerName, int? userId)
     {
         switch (lobbyType)

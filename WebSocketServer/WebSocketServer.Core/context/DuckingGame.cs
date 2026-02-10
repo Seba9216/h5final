@@ -12,5 +12,5 @@ public class DuckingGame
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public LobbyType Type { get; set; }
-    public List<DuckingUser> Players { get; set; }
+    public List<DuckingUser> Players { get; set; } = new();
 }

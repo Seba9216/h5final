@@ -7,6 +7,7 @@ public interface ILobbyManager
     bool LeaveLobby(string connectionId, int lobbyCode);
     int? GetLobbyCodeForConnection(string connectionId);
     public List<Ducker> GetDuckersFromLobbyCode(int lobbyCode);
+    public LobbyType GetLobbyType(int lobbyCode);
     void RemoveConnectionFromAllLobbies(string connectionId);
     public bool StartGame(string ConnectionId, int lobbyCode);
     public string GetLobbyHostId(int lobbyCode);

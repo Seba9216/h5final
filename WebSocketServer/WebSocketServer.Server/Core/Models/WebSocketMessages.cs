@@ -76,3 +76,8 @@ public class StoryPointsResponse
     public string Type => "story_points";
     public string StoryPoints { get; set; } = string.Empty;
 }
+
+public class GameFinishedResponse
+{
+    public string Type => "finished_game";
+}
