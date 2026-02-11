@@ -11,6 +11,7 @@ import { GameSocketService } from '../../services/game-socket-service';
 export class PlaningPokerPage implements OnInit {
   gameHasStarted = false;
   players: Ducker[] = [];
+  ishost = false;
   revealed = false;
   myVote: string | null = null;
 
@@ -25,6 +26,8 @@ export class PlaningPokerPage implements OnInit {
     private socketService: GameSocketService
   ) {}
 ngOnInit() {
+
+
   this.socketService.players$.subscribe(updatedPlayers => {
     if (!this.gameHasStarted) return;
 
@@ -32,9 +35,9 @@ ngOnInit() {
       const updated = updatedPlayers.find(u => u.connectionId === p.connectionId);
       return updated ? { ...p, storyPoints: updated.storyPoints } : p;
     });
-
     this.cdr.markForCheck();
   });
+  
 }
 
   onGameStartedLoadPlayers(started: Ducker[]) {
@@ -44,6 +47,8 @@ ngOnInit() {
     }));
 
     this.gameHasStarted = true;
+    this.ishost = this.socketService.isHost;
+  console.log(this.ishost); 
     this.revealed = false;
     this.myVote = null;
     this.cdr.markForCheck();
