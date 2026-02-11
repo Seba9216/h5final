@@ -107,6 +107,12 @@ public class LobbyManager : ILobbyManager
             return lobbyCode;
         }
 
+        var hostLobby = _lobbies.Values.FirstOrDefault(l => l.HostConnectionId == connectionId);
+        if (hostLobby != null)
+        {
+            return hostLobby.LobbyCode;
+        }ş
+
         return null;
     }
 
