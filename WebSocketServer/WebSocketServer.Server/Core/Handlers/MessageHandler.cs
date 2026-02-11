@@ -43,37 +43,8 @@ public class MessageHandler : IMessageHandler
         {
             try
             {
-                string? token = null;
-                
-                switch (messageType)
-                {
-                    case "broadcast":
-                        var broadcastMsg = JsonSerializer.Deserialize<BroadcastMessage>(messageJson);
-                        token = broadcastMsg?.Token;
-                        break;
-                    case "create_lobby":
-                        var createMsg = JsonSerializer.Deserialize<CreateLobbyMessage>(messageJson);
-                        token = createMsg?.Token;
-                        break;
-                    case "join_lobby":
-                        var joinMsg = JsonSerializer.Deserialize<JoinLobbyMessage>(messageJson);
-                        token = joinMsg?.Token;
-                        break;
-                    case "start_game":
-                        var startMsg = JsonSerializer.Deserialize<StartGameMessage>(messageJson);
-                        token = startMsg?.Token;
-                        break;
-                    case "story_points":
-                        var storyMsg = JsonSerializer.Deserialize<StoryPointsMessage>(messageJson);
-                        token = storyMsg?.Token;
-                        break;
-                    case "game_finished":
-                        var finishedMsg = JsonSerializer.Deserialize<GameFinishedMessage>(messageJson);
-                        token = finishedMsg?.Token;
-                        break;
-                }
-
-                if (token == null || !_tokenService.ValidateToken(token))
+                var baseMessage = JsonSerializer.Deserialize<WebSocketMessage>(messageJson);
+                if (baseMessage?.Token == null || !_tokenService.ValidateToken(baseMessage.Token))
                 {
                     _logger.LogWarning("Invalid or missing auth token from {ConnectionId}", connectionId);
                     await SendErrorAsync(connectionId, "Authentication required. Please login first.");
@@ -87,7 +58,7 @@ public class MessageHandler : IMessageHandler
         switch (messageType)
         {
             case "broadcast":
-                await HandleBroadcastAsync(connectionId, messageJson);
+                    await HandleBroadcastAsync(connectionId, messageJson);
                 break;
 
             case "create_lobby":
@@ -440,7 +411,6 @@ public class MessageHandler : IMessageHandler
         }
         var host = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
         await _connectionManager.SendAsync(host, responseJson);
-
     }
 
 

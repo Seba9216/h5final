@@ -5,29 +5,26 @@ namespace WebSocketServer.Core.Models;
 public class WebSocketMessage
 {
     public string Type { get; set; } = string.Empty;
+    public string? Token { get; set; }
 }
 
 public class BroadcastMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
     public string Content { get; set; } = string.Empty;
 }
 
 public class CreateLobbyMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
     public string LobbyType { get; set; } = string.Empty;
 }
 
 public class StartGameMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
     public int LobbyCode { get; set; }
 }
 
 public class JoinLobbyMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
     public string DuckerName { get; set; } = string.Empty;
     public int LobbyCode { get; set; }
 }
@@ -70,7 +67,6 @@ public class StartGameResponse
 
 public class StoryPointsMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
     public string StoryPoints { get; set; } = string.Empty;
 }
 
@@ -85,7 +81,6 @@ public class StoryPointsResponse
 
 public class GameFinishedMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
 }
 
 public class GameFinishedResponse
@@ -93,9 +88,8 @@ public class GameFinishedResponse
     public string Type => "finished_game";
 }
 
-public class RevealCardsMessage : WebSocketMessage 
+public class RevealCardsMessage : WebSocketMessage
 {
-    public string? Token { get; set; }
 }
 public class RevealCardsResponse 
 {
