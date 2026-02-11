@@ -18,6 +18,7 @@ export class GameSocketService {
   public lobbyCode$ = this.lobbyCodeSubject.asObservable();
 
   private gameStartedSubject = new Subject<Ducker[]>();
+  public isHost = false;
   public gameStarted$ = this.gameStartedSubject.asObservable();
 
   constructor(private authService: AuthService) { }
@@ -71,6 +72,8 @@ export class GameSocketService {
     switch (message.Type) {
       case "lobby_created":
         this.lobbyCodeSubject.next(message.LobbyCode);
+        this.isHost = true;
+        console.log(this.isHost);
         break;
 
       case "joined_lobby":
@@ -85,8 +88,7 @@ export class GameSocketService {
             storyPoints: null,
             userId: ducker.UserId ?? null
           });
-        });
-        
+        });        
       
         this.updatePlayers();
         break;
@@ -116,6 +118,7 @@ case "story_points": {
 
       case "player_left":
         this.playersMap.delete(message.ConnectionId);
+        console.log('players left ' + message.ConnectionId)
         this.updatePlayers();
         break;
 

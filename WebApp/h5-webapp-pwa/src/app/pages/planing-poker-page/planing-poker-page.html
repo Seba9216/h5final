@@ -3,7 +3,7 @@
   <!-- Poker Table -->
   <div class="pp-table">
     <span class="pp-table-text">Planning Poker</span>
-@if (!revealed) {
+@if (!revealed && ishost) {
 <button
   class="btn btn-warning btn-lg pp-action-btn"
   (click)="revealCards()"
@@ -11,7 +11,7 @@
 >
   <i class="bi bi-eye-fill"></i> Reveal Cards
 </button>
-} @else {
+} @else if(revealed && ishost){
       <button class="btn btn-light btn-lg pp-action-btn" (click)="newRound()">
         <i class="bi bi-arrow-clockwise"></i> New Round
       </button>

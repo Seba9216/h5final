@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using System.Text.Json;
 using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.Configuration;
@@ -5,7 +7,6 @@ using WebSocketServer.Core.Connections;
 using WebSocketServer.Core.context;
 using WebSocketServer.Core.LobbyManager;
 using WebSocketServer.Core.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace WebSocketServer.Core.Handlers;
 
@@ -184,7 +185,6 @@ public class MessageHandler : IMessageHandler
                 var joinedResponse = new JoinedLobbyResponse
                 {
                     ConnectedPlayers = playersInLobby
-                        .Where(p => p.ConnectionId != connectionId)
                         .ToList()
                 };
 
@@ -377,11 +377,15 @@ public class MessageHandler : IMessageHandler
             return;
         }
 
+
         var responseJson = JsonSerializer.Serialize(storyPointUpdate);
         foreach (var player in playersInLobby)
         {
             await _connectionManager.SendAsync(player.ConnectionId, responseJson);
         }
+        var host = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        await _connectionManager.SendAsync(host, responseJson);
+
     }
 
     private async Task HandleGameFinishedAsync(string connectionId, string message)
