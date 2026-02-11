@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.context;
 using WebSocketServer.Models;
+using WebSocketServer.Server.Migrations;
 
 namespace WebSocketServer.Controllers;
 
@@ -33,6 +34,13 @@ public class UserController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
         var token = _tokenService.GenerateToken(user.Id, user.UserName);
+
+        _dbContext.Logins.Add(new DuckingLogins
+        {
+            UserId = user.Id,
+            LoginTime = DateTime.UtcNow
+        });
+        await _dbContext.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new { id = user.Id, token, message = "User created successfully" });
     }
@@ -67,6 +75,13 @@ public class UserController : ControllerBase
         }
 
         var token = _tokenService.GenerateToken(user.Id, user.UserName);
+
+        _dbContext.Logins.Add(new DuckingLogins
+        {
+            UserId = user.Id,
+            LoginTime = DateTime.UtcNow
+        });
+        await _dbContext.SaveChangesAsync();
 
         return Ok(new { id = user.Id, userName = user.UserName, token, message = "Login successful" });
     }
