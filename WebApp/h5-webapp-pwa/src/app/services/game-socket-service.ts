@@ -21,6 +21,9 @@ export class GameSocketService {
   public isHost = false;
   public gameStarted$ = this.gameStartedSubject.asObservable();
 
+  private revealCardsSubject = new Subject<void>();
+  public revealCards$ = this.revealCardsSubject.asObservable();
+
   constructor(private authService: AuthService) { }
 
   public createGame() {
@@ -47,7 +50,9 @@ export class GameSocketService {
   public startGame(gamePin: string) {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +gamePin });
   }
-
+  public revealCards(){
+    this.sendWhenOpen({type: "cards_reveal"});
+  }
   public gameFinished()
   {
     this.sendWhenOpen({ type: "game_finished" });
@@ -115,7 +120,9 @@ case "story_points": {
         });
         this.updatePlayers();
         break;
-
+      case "reveal_cards":
+        this.revealCardsSubject.next();
+        break;
       case "player_left":
         this.playersMap.delete(message.ConnectionId);
         console.log('players left ' + message.ConnectionId)

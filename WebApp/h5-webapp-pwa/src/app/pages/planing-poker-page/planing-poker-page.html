@@ -70,7 +70,7 @@
   </div>
 
   <!-- Vote Selection Panel -->
-  @if (!revealed) {
+  @if (!revealed && !ishost) {
     <div class="pp-vote-panel">
       <div class="pp-vote-options">
         @for (val of pokerValues; track val) {

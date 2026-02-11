@@ -106,6 +106,9 @@ public class MessageHandler : IMessageHandler
             case "game_finished":
                 await HandleGameFinishedAsync(connectionId, messageJson);
                 break;
+            case "cards_reveal":
+                await HandleRevealCardsAsync(connectionId, messageJson);
+                break;
             default:
                 await HandleEchoAsync(connectionId, messageJson);
                 break;
@@ -387,6 +390,60 @@ public class MessageHandler : IMessageHandler
         await _connectionManager.SendAsync(host, responseJson);
 
     }
+
+    private async Task HandleRevealCardsAsync(string connectionId, string message)
+    {
+        RevealCardsMessage? revealCardsMessage;
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        try
+        {
+            revealCardsMessage = JsonSerializer.Deserialize<RevealCardsMessage>(message);
+            if (revealCardsMessage == null)
+            {
+                throw new JsonException("Deserialized StoryPointsMessage is null");
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Error parsing story points message from {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "Invalid message format");
+            return;
+        }
+
+        var storyPointUpdate = new RevealCardsResponse();
+
+        var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
+        if (lobbyCode == null)
+        {
+            _logger.LogWarning("Could not find lobby for ConnectionId {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "You are not in a lobby");
+            return;
+        }
+
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
+        if (playersInLobby == null)
+        {
+            _logger.LogWarning("Could not find players for lobby code {LobbyCode}", lobbyCode);
+            await SendErrorAsync(connectionId, "Lobby not found");
+            return;
+        }
+
+
+        var responseJson = JsonSerializer.Serialize(storyPointUpdate);
+        foreach (var player in playersInLobby)
+        {
+            await _connectionManager.SendAsync(player.ConnectionId, responseJson);
+        }
+        var host = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        await _connectionManager.SendAsync(host, responseJson);
+
+    }
+
+
 
     private async Task HandleGameFinishedAsync(string connectionId, string message)
     {

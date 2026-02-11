@@ -26,8 +26,6 @@ export class PlaningPokerPage implements OnInit {
     private socketService: GameSocketService
   ) {}
 ngOnInit() {
-
-
   this.socketService.players$.subscribe(updatedPlayers => {
     if (!this.gameHasStarted) return;
 
@@ -35,6 +33,10 @@ ngOnInit() {
       const updated = updatedPlayers.find(u => u.connectionId === p.connectionId);
       return updated ? { ...p, storyPoints: updated.storyPoints } : p;
     });
+    this.cdr.markForCheck();
+  });
+    this.socketService.revealCards$.subscribe(() => {
+    this.revealed = true;
     this.cdr.markForCheck();
   });
   
@@ -73,8 +75,9 @@ ngOnInit() {
   }
 
   revealCards() {
-    this.revealed = true;
+   this.socketService.revealCards();
   }
+
 
   newRound() {
     this.revealed = false;

@@ -81,6 +81,8 @@ public class StoryPointsResponse
     public string StoryPoints { get; set; } = string.Empty;
 }
 
+
+
 public class GameFinishedMessage : WebSocketMessage
 {
     public string? Token { get; set; }
@@ -89,4 +91,13 @@ public class GameFinishedMessage : WebSocketMessage
 public class GameFinishedResponse
 {
     public string Type => "finished_game";
+}
+
+public class RevealCardsMessage : WebSocketMessage 
+{
+    public string? Token { get; set; }
+}
+public class RevealCardsResponse 
+{
+    public string Type => "reveal_cards";
 }
