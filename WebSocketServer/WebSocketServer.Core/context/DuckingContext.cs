@@ -14,6 +14,7 @@ public class DuckingContext : DbContext
 
     public DbSet<DuckingUser> Users { get; set; }
     public DbSet<DuckingGame> Games { get; set; }
+    public DbSet<DuckingLogins> Logins { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -25,7 +26,6 @@ public class DuckingContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure many-to-many relationship between DuckingGame and DuckingUser
         modelBuilder.Entity<DuckingGame>()
             .HasMany(g => g.Players)
             .WithMany()
@@ -33,5 +33,11 @@ public class DuckingContext : DbContext
                 "GamePlayers",
                 j => j.HasOne<DuckingUser>().WithMany(),
                 j => j.HasOne<DuckingGame>().WithMany());
+
+        modelBuilder.Entity<DuckingLogins>()
+            .HasOne<DuckingUser>()
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

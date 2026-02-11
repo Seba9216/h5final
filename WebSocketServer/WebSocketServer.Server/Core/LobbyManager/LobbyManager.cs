@@ -110,8 +110,8 @@ public class LobbyManager : ILobbyManager
         var hostLobby = _lobbies.Values.FirstOrDefault(l => l.HostConnectionId == connectionId);
         if (hostLobby != null)
         {
-            return hostLobby.LobbyCode;
-        }ş
+            return hostLobby.Code;
+        }
 
         return null;
     }
