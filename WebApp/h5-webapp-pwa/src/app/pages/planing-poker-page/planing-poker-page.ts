@@ -7,6 +7,7 @@ import { WinnerModal } from '../../shared-components/winner-modal/winner-modal';
 
 @Component({
   selector: 'app-planing-poker-page',
+  standalone: true,
   imports: [ConnectionArea,WinnerModal],
   templateUrl: './planing-poker-page.html',
 })

@@ -84,5 +84,5 @@
 </div>
 <app-winner-modal #winnerModal></app-winner-modal>
 } @else {
-  <app-connection-area (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area>
+  <app-connection-area [gameType]="'PlanningPoker'" (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area>
 }

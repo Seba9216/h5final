@@ -32,9 +32,10 @@ export class GameSocketService {
 
   constructor(private authService: AuthService) { }
 
-  public createGame() {
+  public createGame(gameType : string |null) {
     this.setupWebSocket();
-    this.sendWhenOpen({ type: "create_lobby", LobbyType: "DuckRace" });
+    
+    this.sendWhenOpen({ type: "create_lobby", LobbyType: gameType });
     this.playersMap.clear();
     this.updatePlayers();
   }

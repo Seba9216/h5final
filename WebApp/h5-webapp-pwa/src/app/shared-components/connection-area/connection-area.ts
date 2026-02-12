@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -15,10 +15,9 @@ export class ConnectionArea implements OnInit, OnDestroy {
   gamePin = '';
   duckerName = '';
   newGamePin = '';
-
   // Local storage for players to satisfy the 'playersArray' getter
   private _currentPlayers: Ducker[] = [];
-
+  @Input() gameType: string | null = 'planning-poker';
   @Output() gameStarted = new EventEmitter<Ducker[]>();
 
   // To manage memory and observables
@@ -63,7 +62,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
   // --- Methods called by HTML buttons ---
 
   public CreateGame() {
-    this.socketService.createGame();
+    this.socketService.createGame(this.gameType);
   }
 
   public JoinGame() {
@@ -80,7 +79,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
       this.socketService.startGame(this.newGamePin);
     }
   }
-
+ 
   // --- Getter expected by HTML ---
   
   get playersArray(): Ducker[] {
