@@ -36,7 +36,7 @@ public class MessageHandler : IMessageHandler
 
     public async Task HandleMessageAsync(string connectionId, string messageType, string messageJson)
     {
-        _logger.LogInformation("Handling message type '{MessageType}' from {ConnectionId}",
+        _logger.LogInformation("Handling message lobbyType '{MessageType}' from {ConnectionId}",
             messageType, connectionId);
 
         if (messageType != "echo")
@@ -80,6 +80,9 @@ public class MessageHandler : IMessageHandler
             case "cards_reveal":
                 await HandleRevealCardsAsync(connectionId, messageJson);
                 break;
+            case "new_round":
+                await HandleNewRoundAsync(connectionId, messageJson);
+                break;
             default:
                 await HandleEchoAsync(connectionId, messageJson);
                 break;
@@ -104,7 +107,7 @@ public class MessageHandler : IMessageHandler
 
             if (!Enum.TryParse(createLobbyMessage.LobbyType, true, out lobbyType))
             {
-                throw new JsonException($"Invalid lobby type: {createLobbyMessage.LobbyType}");
+                throw new JsonException($"Invalid lobby lobbyType: {createLobbyMessage.LobbyType}");
             }
         }
         catch (JsonException ex)
@@ -413,6 +416,56 @@ public class MessageHandler : IMessageHandler
         await _connectionManager.SendAsync(host, responseJson);
     }
 
+    private async Task HandleNewRoundAsync(string connectionId, string message)
+    {
+        NewRoundMessage? newRoundMessage;
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        try
+        {
+            newRoundMessage = JsonSerializer.Deserialize<NewRoundMessage>(message);
+            if (newRoundMessage == null)
+            {
+                throw new JsonException("Deserialized NewRoundMessage is null");
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Error parsing story points message from {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "Invalid message format");
+            return;
+        }
+
+        var newRoundUpdate = new NewRoundResponse();
+
+        var lobbyCode = _lobbyManager.GetLobbyCodeForConnection(connectionId);
+        if (lobbyCode == null)
+        {
+            _logger.LogWarning("Could not find lobby for ConnectionId {ConnectionId}", connectionId);
+            await SendErrorAsync(connectionId, "You are not in a lobby");
+            return;
+        }
+
+        var playersInLobby = _lobbyManager.GetDuckersFromLobbyCode(lobbyCode.Value);
+        if (playersInLobby == null)
+        {
+            _logger.LogWarning("Could not find players for lobby code {LobbyCode}", lobbyCode);
+            await SendErrorAsync(connectionId, "Lobby not found");
+            return;
+        }
+
+
+        var responseJson = JsonSerializer.Serialize(newRoundUpdate);
+        foreach (var player in playersInLobby)
+        {
+            await _connectionManager.SendAsync(player.ConnectionId, responseJson);
+        }
+        var host = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        await _connectionManager.SendAsync(host, responseJson);
+    }
 
 
     private async Task HandleGameFinishedAsync(string connectionId, string message)
@@ -449,11 +502,18 @@ public class MessageHandler : IMessageHandler
                 }
             }
         }
+        var lobbyType = _lobbyManager.GetLobbyType(lobbyCode.Value);
+        GameFinishedResponse? gameFinishedResponse = new GameFinishedResponse();
+        var responseJson = JsonSerializer.Serialize(gameFinishedResponse);
+        foreach (var user in playersInLobby)
+        {
+            await _connectionManager.SendAsync(user.ConnectionId, responseJson);
 
+        }
         // Create and save the game record
         var game = new DuckingGame
         {
-            Type = _lobbyManager.GetLobbyType(lobbyCode.Value),
+            Type = lobbyType,
             Players = duckingUsers
         };
 

@@ -95,3 +95,10 @@ public class RevealCardsResponse
 {
     public string Type => "reveal_cards";
 }
+
+public class NewRoundMessage : WebSocketMessage { }
+public class NewRoundResponse
+{
+    public string Type => "start_new_round";
+}
+

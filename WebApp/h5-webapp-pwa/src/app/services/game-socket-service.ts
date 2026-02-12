@@ -21,6 +21,12 @@ export class GameSocketService {
   public isHost = false;
   public gameStarted$ = this.gameStartedSubject.asObservable();
 
+  private gameEndedSubject = new Subject<void>();
+  public gameEndend$ = this.gameEndedSubject.asObservable();
+
+  private newRoundSubject = new Subject<void>();
+  public newRound$ = this.newRoundSubject.asObservable();
+
   private revealCardsSubject = new Subject<void>();
   public revealCards$ = this.revealCardsSubject.asObservable();
 
@@ -56,6 +62,9 @@ export class GameSocketService {
   public gameFinished()
   {
     this.sendWhenOpen({ type: "game_finished" });
+  }
+  public newRound(){
+    this.sendWhenOpen({ type: "new_round"});
   }
 
   private setupWebSocket() {
@@ -139,7 +148,12 @@ case "story_points": {
         }));
         this.gameStartedSubject.next(duckers);
         break;
-
+      case "finished_game":
+      this.gameEndedSubject.next();
+      break;
+      case "start_new_round":
+          this.newRoundSubject.next();
+      break;
       default:
         console.warn("Unknown message type:", message.Type);
     }

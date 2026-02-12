@@ -1,15 +1,19 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Ducker } from '../../../models/duckrace/ducker';
 import { ConnectionArea } from '../../shared-components/connection-area/connection-area';
 import { GameSocketService } from '../../services/game-socket-service';
+import { throwError } from 'rxjs';
+import { WinnerModal } from '../../shared-components/winner-modal/winner-modal';
 
 @Component({
   selector: 'app-planing-poker-page',
-  imports: [ConnectionArea],
+  imports: [ConnectionArea,WinnerModal],
   templateUrl: './planing-poker-page.html',
 })
 export class PlaningPokerPage implements OnInit {
+  @ViewChild('winnerModal') winnerModal!: WinnerModal;
   gameHasStarted = false;
+  gameHasEnded = false;
   players: Ducker[] = [];
   ishost = false;
   revealed = false;
@@ -37,6 +41,21 @@ ngOnInit() {
   });
     this.socketService.revealCards$.subscribe(() => {
     this.revealed = true;
+    this.cdr.markForCheck();
+  });
+  this.socketService.gameEndend$.subscribe(() => {
+    this.gameHasEnded = true;
+    this.winnerModal.show();
+    this.cdr.markForCheck();
+  });
+   this.socketService.newRound$.subscribe(() => {
+    this.revealed = false;
+    this.myVote = null;
+
+    this.players = this.players.map(p => ({
+      ...p,
+      storyPoints: null
+    }));    
     this.cdr.markForCheck();
   });
   
@@ -75,18 +94,19 @@ ngOnInit() {
   }
 
   revealCards() {
-   this.socketService.revealCards();
+   this.socketService.revealCards();  
+   const allSameStoryPoints =
+  this.players.length > 0 &&
+  this.players.every(p => p.storyPoints === this.players[0].storyPoints);
+  if(allSameStoryPoints){
+    this.socketService.gameFinished();
+    this.winnerModal.show();
+  } 
   }
 
 
   newRound() {
-    this.revealed = false;
-    this.myVote = null;
-
-    this.players = this.players.map(p => ({
-      ...p,
-      storyPoints: null
-    }));
+    this.socketService.newRound();
   }
   get hasAnyVotes(): boolean {
   return this.players.some(p => !!p.storyPoints);
