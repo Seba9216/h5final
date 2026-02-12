@@ -1,0 +1,26 @@
+<div class="profile-container">
+
+  @if (!isLoading()) {
+
+    <div class="profile-card">
+
+      @if (username()) {
+        <h1>Hello "{{ username() }}" 👋</h1>
+      } @else {
+        <div class="error-message">
+          {{ errorMessage() }}
+        </div>
+      }
+
+    </div>
+
+  } @else {
+
+    <div class="profile-card">
+      <h2>Loading profile...</h2>
+    </div>
+
+  }
+
+</div>
+

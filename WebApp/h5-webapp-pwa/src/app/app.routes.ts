@@ -3,6 +3,7 @@ import { HomePage } from './pages/home-page/home-page';
 import { PlaningPokerPage } from './pages/planing-poker-page/planing-poker-page';
 import { DuckRacePage } from './pages/duck-race-page/duck-race-page';
 import { authGuard } from './guards/auth.guard';
+import { ProfilePage } from './pages/profile-page/profile-page';
 
 
 export const routes: Routes = [
@@ -28,5 +29,10 @@ export const routes: Routes = [
         path: 'duckrace',
         component: DuckRacePage,
         canActivate: [authGuard]
+    },
+    {
+        path: 'profile',
+        component: ProfilePage,
+        canActivate : [authGuard]
     }
 ];
