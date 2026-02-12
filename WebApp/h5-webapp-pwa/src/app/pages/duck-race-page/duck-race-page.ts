@@ -13,6 +13,7 @@ import { GameSocketService } from '../../services/game-socket-service';
 export class DuckRacePage {
      @ViewChild('winnerModal') winnerModal!: WinnerModal;
       gameHasStarted: boolean = false;
+      gameHasFinished = false;
       players: Ducker[] = [];
 
     constructor(private cdr: ChangeDetectorRef, private gameSocketService: GameSocketService) { }
@@ -23,8 +24,11 @@ export class DuckRacePage {
     this.cdr.markForCheck();
   }
    onDuckFinished(finishedDuck: Ducker){
+    if(!this.gameHasFinished){
+      this.gameHasFinished = true;
     this.gameSocketService.gameFinished();
     this.winnerModal.duckerName = finishedDuck.name;
     this.winnerModal.show();
+    }
   }
 }
