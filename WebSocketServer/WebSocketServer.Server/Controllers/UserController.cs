@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.context;
 using WebSocketServer.Models;
-using WebSocketServer.Server.Migrations;
 
 namespace WebSocketServer.Controllers;
 

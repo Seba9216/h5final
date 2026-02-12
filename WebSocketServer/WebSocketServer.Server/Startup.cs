@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.Connections;
 using WebSocketServer.Core.Handlers;
 using WebSocketServer.Core.LobbyManager;
+using WebSocketServer.Server.Repositorys;
+using WebSocketServer.Server.Services;
 
 namespace WebSocketServer;
 
@@ -29,6 +29,10 @@ public class Startup
         services.AddSingleton<ILobbyManager, LobbyManager>();
         services.AddTransient<IMessageHandler, MessageHandler>();
         services.AddTransient<IWebSocketHandler, WebSocketHandler>();
+        services.AddScoped<IDuckingLoginService, DuckingLoginService>();
+        services.AddScoped<IDuckingLoginRepository, DuckingLoginRepository>();
+        services.AddScoped<IGameHistoryRepository, GameHistoryRepository>();
+        services.AddScoped<IGameHistoryService, GameHistoryService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

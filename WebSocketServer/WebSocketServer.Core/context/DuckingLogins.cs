@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebSocketServer.Core.context
+namespace WebSocketServer.Core.context;
+
+public class DuckingLogins
 {
-    public class DuckingLogins
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public DateTime LoginTime { get; set; }
-    }
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public DateTime LoginTime { get; set; }
 }

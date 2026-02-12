@@ -13,7 +13,7 @@ export class WinnerModal {
   show() {
     this.isVisible = true;
   }
-
+  
   close() {
    this.router.navigate(['/']);
     this.isVisible = false;

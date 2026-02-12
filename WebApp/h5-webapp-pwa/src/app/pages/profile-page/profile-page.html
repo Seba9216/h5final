@@ -4,12 +4,53 @@
 
     <div class="profile-card">
 
+      <!-- USERNAME -->
       @if (username()) {
         <h1>Hello "{{ username() }}" 👋</h1>
       } @else {
         <div class="error-message">
           {{ errorMessage() }}
         </div>
+      }
+
+      <hr />
+
+      <!-- LOGIN HISTORY -->
+      <h2>Login History</h2>
+
+      @if (userLogins().length > 0) {
+        <ul>
+          @for (login of userLogins(); track login.id) {
+            <li>
+              {{ login.loginTime | date:'medium' }}
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>No login history found.</p>
+      }
+
+      <hr />
+
+      <!-- GAME HISTORY -->
+      <h2>Game History</h2>
+
+      @if (gameHistory()) {
+
+        @if (gameHistory()!.duckingGames.length > 0) {
+          <ul>
+            @for (game of gameHistory()!.duckingGames; track game.id) {
+              <li>
+                Game ID: {{ game.id }}
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>No games played yet.</p>
+        }
+
+      } @else {
+        <p>No game history found.</p>
       }
 
     </div>
@@ -23,4 +64,3 @@
   }
 
 </div>
-
