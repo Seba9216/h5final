@@ -18,9 +18,10 @@ public class Startup
         {
             options.AddPolicy("AllowAll", builder =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+                builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             });
         });
         
@@ -67,6 +68,15 @@ public class Startup
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
+                    var origin = context.Request.Headers["Origin"].ToString();
+                    var allowedOrigins = new[] { "http://localhost:4200" };
+
+                    if (!allowedOrigins.Contains(origin))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        return;
+                    }
+
                     using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                     var handler = context.RequestServices.GetRequiredService<IWebSocketHandler>();
                     await handler.HandleAsync(context, webSocket);
