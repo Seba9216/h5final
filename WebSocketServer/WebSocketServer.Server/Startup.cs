@@ -18,7 +18,7 @@ public class Startup
         {
             options.AddPolicy("AllowAll", builder =>
             {
-                builder.WithOrigins("http://localhost:4200")
+                builder.WithOrigins("*")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
@@ -69,7 +69,7 @@ public class Startup
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     var origin = context.Request.Headers["Origin"].ToString();
-                    var allowedOrigins = new[] { "http://localhost:4200" };
+                    var allowedOrigins = new[] { "*" };
 
                     if (!allowedOrigins.Contains(origin))
                     {
