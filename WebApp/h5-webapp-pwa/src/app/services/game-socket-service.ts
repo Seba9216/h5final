@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class GameSocketService {
-  private SERVER_URL = "ws://localhost:5057/ws";
+  private SERVER_URL = "ws://seba92162.web.techcollege.dk:5057/ws";
   private ws: WebSocket | null = null;
 
   private playersMap = new Map<string, Ducker>();

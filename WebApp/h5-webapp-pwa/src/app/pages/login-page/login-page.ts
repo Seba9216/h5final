@@ -161,7 +161,7 @@ export class LoginPage {
     this.isLoading = true;
 
     try {
-      const response = await fetch('http://localhost:5057/api/user/login', {
+      const response = await fetch('http://seba92162.web.techcollege.dk:5057/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

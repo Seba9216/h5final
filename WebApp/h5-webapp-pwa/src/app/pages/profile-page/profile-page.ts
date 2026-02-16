@@ -32,7 +32,7 @@ private loadUserLogins() {
   const token = this.authService.getToken();
   const userId = this.authService.getUserId();
 
-  this.http.get<any[]>(`http://localhost:5057/api/LoginHistory/${userId}`, {
+  this.http.get<any[]>(`http://seba92162.web.techcollege.dk:5057/api/LoginHistory/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -51,7 +51,7 @@ private loadGameHistory() {
   const token = this.authService.getToken();
   const userId = this.authService.getUserId();
 
-  this.http.get<any>(`http://localhost:5057/api/gamehistory/${userId}`, {
+  this.http.get<any>(`http://seba92162.web.techcollege.dk:5057/api/gamehistory/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -74,7 +74,7 @@ private loadProfile() {
     return;
   }
 
-  this.http.get<any>(`http://localhost:5057/api/user/${userId}`, {
+  this.http.get<any>(`http://seba92162.web.techcollege.dk:5057/api/user/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
