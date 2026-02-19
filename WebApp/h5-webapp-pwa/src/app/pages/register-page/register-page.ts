@@ -203,7 +203,7 @@ export class RegisterPage {
     this.isLoading = true;
 
     try {
-      const response = await fetch('http://187.77.88.100:5000/api/user', {
+      const response = await fetch('https://augustdev.work/api/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

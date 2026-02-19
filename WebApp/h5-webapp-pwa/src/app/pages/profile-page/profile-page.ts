@@ -32,7 +32,7 @@ private loadUserLogins() {
   const token = this.authService.getToken();
   const userId = this.authService.getUserId();
 
-  this.http.get<any[]>(`http://187.77.88.100:5000/api/LoginHistory/${userId}`, {
+  this.http.get<any[]>(`https://augustdev.work/api/LoginHistory/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -51,7 +51,7 @@ private loadGameHistory() {
   const token = this.authService.getToken();
   const userId = this.authService.getUserId();
 
-  this.http.get<any>(`http://187.77.88.100:5000/api/gamehistory/${userId}`, {
+  this.http.get<any>(`https://augustdev.work/api/gamehistory/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -74,7 +74,7 @@ private loadProfile() {
     return;
   }
 
-  this.http.get<any>(`http://187.77.88.100:5000/api/user/${userId}`, {
+  this.http.get<any>(`https://augustdev.work/api/user/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
