@@ -18,10 +18,10 @@ public class Startup
         {
             options.AddPolicy("AllowAll", builder =>
             {
-                builder.WithOrigins("*")
+                builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
+                    .AllowAnyHeader();
+                    
             });
         });
         
@@ -51,32 +51,24 @@ public class Startup
             KeepAliveInterval = TimeSpan.FromSeconds(120),
             ReceiveBufferSize = 4 * 1024
         };
-        
+        webSocketOptions.AllowedOrigins.Add("http://seba92163.web.techcollege.dk");
+
         app.UseWebSockets(webSocketOptions);
 
         app.UseEndpoints(endpoints =>
         {
+            
             endpoints.MapControllers().RequireCors("AllowAll");
             
             endpoints.MapGet("/health", async context =>
             {
                 context.Response.StatusCode = 200;
                 await context.Response.WriteAsync("healthy");
-            });
-
+            }).RequireCors("AllowAll"); ;
             endpoints.Map("/ws", async context =>
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
-                    var origin = context.Request.Headers["Origin"].ToString();
-                    var allowedOrigins = new[] { "*" };
-
-                    if (!allowedOrigins.Contains(origin))
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        return;
-                    }
-
                     using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                     var handler = context.RequestServices.GetRequiredService<IWebSocketHandler>();
                     await handler.HandleAsync(context, webSocket);
