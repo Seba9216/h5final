@@ -10,7 +10,7 @@ To start a local development server, run:
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://seba92162.web.techcollege.dk:4200/`. The application will automatically reload whenever you modify any of the source files.
+Once the server is running, open your browser and navigate to `http://187.77.88.100:5000:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ## Code scaffolding
 
