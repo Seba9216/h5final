@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 })
 export class WinnerModal {
   @Input() duckerName!: string | null;
+  @Input() closeureText! :string;
   isVisible = false;
   private router = inject(Router);
   show() {

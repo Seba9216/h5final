@@ -46,6 +46,8 @@ ngOnInit() {
   });
   this.socketService.gameEndend$.subscribe(() => {
     this.gameHasEnded = true;
+    this.winnerModal.closeureText = "We have an agreement!"
+    this.winnerModal.duckerName = "The task is estimated at " + this.players[0].storyPoints;
     this.winnerModal.show();
     this.cdr.markForCheck();
   });
@@ -104,8 +106,6 @@ ngOnInit() {
     this.winnerModal.show();
   } 
   }
-
-
   newRound() {
     this.socketService.newRound();
   }

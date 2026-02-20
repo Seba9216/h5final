@@ -27,7 +27,8 @@ export class DuckRacePage {
     if(!this.gameHasFinished){
       this.gameHasFinished = true;
     this.gameSocketService.gameFinished();
-    this.winnerModal.duckerName = finishedDuck.name;
+    this.winnerModal.duckerName = finishedDuck.name + " has won the race";
+    this.winnerModal.closeureText = "🏆 We Have a Winner! 🏆"; 
     this.winnerModal.show();
     }
   }
