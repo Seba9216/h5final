@@ -75,7 +75,10 @@
               "buildTarget": "h5-webapp-pwa:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+    	  "options": {
+      	    "allowedHosts": ["augustdev.work"]
+    	  }
         },
         "test": {
           "builder": "@angular/build:unit-test"

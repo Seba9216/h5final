@@ -51,7 +51,7 @@ public class Startup
             KeepAliveInterval = TimeSpan.FromSeconds(120),
             ReceiveBufferSize = 4 * 1024
         };
-        webSocketOptions.AllowedOrigins.Add("http://seba92163.web.techcollege.dk");
+        webSocketOptions.AllowedOrigins.Add("https://augustdev.work");
 
         app.UseWebSockets(webSocketOptions);
 
