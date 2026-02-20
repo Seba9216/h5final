@@ -4,7 +4,7 @@ using WebSocketServer.Core.context;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DuckingContext>
- (options => options.UseMySQL("server=localhost;database=testdb;user=user;password=password;",
+ (options => options.UseMySQL("server=mysql;database=testdb;user=user;password=password;",
     b => b.MigrationsAssembly("WebSocketServer.Server")));
 var startup = new Startup();
 startup.ConfigureServices(builder.Services);
