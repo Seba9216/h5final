@@ -1,19 +1,19 @@
 services:
-  websocket-server:
-    build:
-      context: ./WebSocketServer
-      dockerfile: Dockerfile
-    ports:
-      - "5057:5057"
-    environment:
-      - ASPNETCORE_URLS=http://+:5057
-      - ASPNETCORE_ENVIRONMENT=Development
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://seba92162.web.techcollege.dk:5057/health"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
+#  websocket-server:
+#    build:
+#      context: ./WebSocketServer
+#      dockerfile: Dockerfile
+#    ports:
+#      - "5057:5057"
+#    environment:
+#      - ASPNETCORE_URLS=http://+:5057
+#      - ASPNETCORE_ENVIRONMENT=Development
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhosthealth"]
+#      interval: 5s
+#      timeout: 3s
+#      retries: 5
+#      start_period: 10s
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -31,14 +31,14 @@ services:
 
 
 
-  frontend:
-    build:
-      context: ./WebApp/h5-webapp-pwa
-      dockerfile: Dockerfile
-    ports:
-      - "4200:4200"
-    depends_on:
-      websocket-server:
-        condition: service_healthy
+#  frontend:
+#    build:
+#      context: ./WebApp/h5-webapp-pwa
+#      dockerfile: Dockerfile
+#    ports:
+#      - "4200:4200"
+#    depends_on:
+#      websocket-server:
+#        condition: service_healthy
 volumes:
   mysql_data:
