@@ -9,7 +9,7 @@ services:
 #      - ASPNETCORE_URLS=http://+:5057
 #      - ASPNETCORE_ENVIRONMENT=Development
 #    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhosthealth"]
+#      test: ["CMD", "curl", "-f", "http://localhost/health"]
 #      interval: 5s
 #      timeout: 3s
 #      retries: 5
