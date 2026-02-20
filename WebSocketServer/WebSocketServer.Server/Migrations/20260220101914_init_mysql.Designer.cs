@@ -11,8 +11,8 @@ using WebSocketServer.Core.context;
 namespace WebSocketServer.Server.Migrations
 {
     [DbContext(typeof(DuckingContext))]
-    [Migration("20260220100242_init")]
-    partial class init
+    [Migration("20260220101914_init_mysql")]
+    partial class init_mysql
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
