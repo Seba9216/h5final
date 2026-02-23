@@ -49,6 +49,7 @@ ngOnInit() {
     this.winnerModal.closeureText = "We have an agreement!"
     this.winnerModal.duckerName = "The task is estimated at " + this.players[0].storyPoints;
     this.winnerModal.show();
+    this.socketService.closeWebSocketConnection();
     this.cdr.markForCheck();
   });
    this.socketService.newRound$.subscribe(() => {

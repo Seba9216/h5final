@@ -55,7 +55,7 @@ export class GameSocketService {
     this.sendWhenOpen({type: "story_points", StoryPoints: storyPoints })
     this.updatePlayers();
   }
-  
+
   public startGame(gamePin: string) {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +gamePin });
   }
@@ -69,7 +69,9 @@ export class GameSocketService {
   public newRound(){
     this.sendWhenOpen({ type: "new_round"});
   }
-
+  public closeWebSocketConnection(){
+    this.ws?.close();
+  }
   private setupWebSocket() {
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return; 
