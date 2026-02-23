@@ -70,6 +70,9 @@ export class GameSocketService {
     this.sendWhenOpen({ type: "new_round"});
   }
   public closeWebSocketConnection(){
+    this.playersMap.clear();
+    this.isHost = false;
+    
     this.ws?.close();
   }
   private setupWebSocket() {
