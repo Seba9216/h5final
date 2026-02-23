@@ -49,11 +49,13 @@ export class GameSocketService {
     });
   }
 
+
+
   public sendStoryPoints(storyPoints: string){
     this.sendWhenOpen({type: "story_points", StoryPoints: storyPoints })
     this.updatePlayers();
   }
-
+  
   public startGame(gamePin: string) {
     this.sendWhenOpen({ type: "start_game", LobbyCode: +gamePin });
   }
