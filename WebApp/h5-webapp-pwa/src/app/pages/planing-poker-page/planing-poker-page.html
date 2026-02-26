@@ -2,7 +2,7 @@
 <div class="pp-room">
   <!-- Poker Table -->
   <div class="pp-table">
-    <span class="pp-table-text">Planning Poker</span>
+    <span class="pp-table-text">{{ task }} </span>
 @if (!revealed && ishost) {
 <button
   class="btn btn-warning btn-lg pp-action-btn"
@@ -83,5 +83,18 @@
 </div>
 <app-winner-modal #winnerModal></app-winner-modal>
 } @else {
-  <app-connection-area [gameType]="'PlanningPoker'" (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area>
+  <div class="col-sm-6 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <label for="task" class="form-label">Task to Estimate</label>
+        <input type="text"
+               class="form-control mb-3"
+               id="task"
+               placeholder="SomeTask"
+               [(ngModel)]="task"
+                 />
+      </div>
+    </div>
+  </div>
+  <app-connection-area [gameType]="'PlanningPoker'" [task]="task" (gameStarted)="onGameStartedLoadPlayers($event)"></app-connection-area>
 }

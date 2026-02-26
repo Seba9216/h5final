@@ -285,7 +285,8 @@ public class MessageHandler : IMessageHandler
 
             var startGameResponse = new StartGameResponse
             {
-                Players = playersInLobby
+                Players = playersInLobby,
+                Task = startGameMessage.Task
             };
 
             var responseJson = JsonSerializer.Serialize(startGameResponse);

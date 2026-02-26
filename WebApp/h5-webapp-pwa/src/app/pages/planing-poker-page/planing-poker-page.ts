@@ -4,11 +4,13 @@ import { ConnectionArea } from '../../shared-components/connection-area/connecti
 import { GameSocketService } from '../../services/game-socket-service';
 import { throwError } from 'rxjs';
 import { WinnerModal } from '../../shared-components/winner-modal/winner-modal';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-planing-poker-page',
   standalone: true,
-  imports: [ConnectionArea,WinnerModal],
+  imports: [ConnectionArea,WinnerModal,CommonModule,FormsModule],
   templateUrl: './planing-poker-page.html',
 })
 export class PlaningPokerPage implements OnInit {
@@ -16,6 +18,8 @@ export class PlaningPokerPage implements OnInit {
   gameHasStarted = false;
   gameHasEnded = false;
   players: Ducker[] = [];
+
+  task! : string;
   ishost = false;
   revealed = false;
   myVote: string | null = null;
@@ -70,7 +74,7 @@ ngOnInit() {
       ...p,
       storyPoints: null
     }));
-
+    this.task = this.socketService.task;
     this.gameHasStarted = true;
     this.ishost = this.socketService.isHost;
   console.log(this.ishost); 

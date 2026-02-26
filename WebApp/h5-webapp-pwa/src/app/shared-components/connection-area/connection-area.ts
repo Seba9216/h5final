@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy, Input, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -18,6 +18,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
   // Local storage for players to satisfy the 'playersArray' getter
   private _currentPlayers: Ducker[] = [];
   @Input() gameType: string | null = 'planning-poker';
+  @Input() task! : string;
   @Output() gameStarted = new EventEmitter<Ducker[]>();
 
   // To manage memory and observables
@@ -76,7 +77,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
   public StartGame() {
     // Use the local newGamePin that was updated via subscription
     if (this.newGamePin) {
-      this.socketService.startGame(this.newGamePin);
+      this.socketService.startGame(this.newGamePin,this.task);
     }
   }
  

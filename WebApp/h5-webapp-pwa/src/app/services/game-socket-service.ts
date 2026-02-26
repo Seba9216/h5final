@@ -19,6 +19,7 @@ export class GameSocketService {
 
   private gameStartedSubject = new Subject<Ducker[]>();
   public isHost = false;
+  public task!: string; 
   public gameStarted$ = this.gameStartedSubject.asObservable();
 
   private gameEndedSubject = new Subject<void>();
@@ -56,8 +57,8 @@ export class GameSocketService {
     this.updatePlayers();
   }
 
-  public startGame(gamePin: string) {
-    this.sendWhenOpen({ type: "start_game", LobbyCode: +gamePin });
+  public startGame(gamePin: string, task : string) {
+    this.sendWhenOpen({ type: "start_game", LobbyCode: + gamePin, Task: + task });
   }
   public revealCards(){
     this.sendWhenOpen({type: "cards_reveal"});
@@ -154,6 +155,7 @@ case "story_points": {
           storyPoints: null,
           userId: p.UserId ?? null
         }));
+        this.task = message.Task;
         this.gameStartedSubject.next(duckers);
         break;
       case "finished_game":
