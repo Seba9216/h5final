@@ -58,7 +58,7 @@ export class GameSocketService {
   }
 
   public startGame(gamePin: string, task : string) {
-    this.sendWhenOpen({ type: "start_game", LobbyCode: + gamePin, Task: + task });
+    this.sendWhenOpen({ type: "start_game", LobbyCode: + gamePin, Task: task });
   }
   public revealCards(){
     this.sendWhenOpen({type: "cards_reveal"});
