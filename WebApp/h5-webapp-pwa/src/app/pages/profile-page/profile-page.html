@@ -1,66 +1,82 @@
-<div class="profile-container">
+<div class="profile-page">
+  <div class="profile-card">
 
-  @if (!isLoading()) {
+    @if (isLoading()) {
+      <div class="profile-state">
+        <div class="spinner"></div>
+        <h2>Loading profile...</h2>
+        <p>Please wait while we fetch your details.</p>
+      </div>
+    } @else {
 
-    <div class="profile-card">
+      <div class="profile-header">
+        @if (username()) {
+          <h1>Welcome back, <span>{{ username() }}</span></h1>
+          <p>Your activity overview</p>
+        } @else {
+          <div class="error-banner">
+            {{ errorMessage() }}
+          </div>
+        }
+      </div>
 
-      <!-- USERNAME -->
-      @if (username()) {
-        <h1>Hello "{{ username() }}"</h1>
-      } @else {
-        <div class="error-message">
-          {{ errorMessage() }}
+      <section class="profile-section">
+        <div class="section-header">
+          <h2>Login History</h2>
+          <span class="section-count">{{ userLogins().length }}</span>
         </div>
-      }
 
-      <hr />
-
-      <!-- LOGIN HISTORY -->
-      <h2>Login History</h2>
-
-      @if (userLogins().length > 0) {
-        <ul>
-          @for (login of userLogins(); track login.id) {
-            <li>
-              {{ login.loginTime | date:'medium' }}
-            </li>
-          }
-        </ul>
-      } @else {
-        <p>No login history found.</p>
-      }
-
-      <hr />
-
-      <!-- GAME HISTORY -->
-      <h2>Game History</h2>
-
-      @if (gameHistory()) {
-
-        @if (gameHistory()!.duckingGames.length > 0) {
-          <ul>
-            @for (game of gameHistory()!.duckingGames; track game.id) {
-              <li>
-                Game ID: {{ game.id }}
+        @if (userLogins().length > 0) {
+          <ul class="history-list">
+            @for (login of userLogins(); track login.id) {
+              <li class="history-item">
+                <div class="item-icon">
+                  <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="item-content">
+                  <strong>Login</strong>
+                  <span>{{ login.loginTime | date:'medium' }}</span>
+                </div>
               </li>
             }
           </ul>
         } @else {
-          <p>No games played yet.</p>
+          <p class="empty-state">No login history found.</p>
         }
+      </section>
 
-      } @else {
-        <p>No game history found.</p>
-      }
+      <section class="profile-section">
+        <div class="section-header">
+          <h2>Game History</h2>
+          <span class="section-count">
+            {{ gameHistory()?.duckingGames?.length || 0 }}
+          </span>
+        </div>
 
-    </div>
+        @if (gameHistory()) {
+          @if (gameHistory()!.duckingGames.length > 0) {
+            <ul class="history-list">
+              @for (game of gameHistory()!.duckingGames; track game.id) {
+                <li class="history-item">
+                  <div class="item-icon">
+                    <i class="bi bi-controller"></i>
+                  </div>
+                  <div class="item-content">
+                    <strong>Game Played</strong>
+                    <span>Game ID: {{ game.id }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="empty-state">No games played yet.</p>
+          }
+        } @else {
+          <p class="empty-state">No game history found.</p>
+        }
+      </section>
 
-  } @else {
+    }
 
-    <div class="profile-card">
-      <h2>Loading profile...</h2>
-    </div>
-
-  }
-
+  </div>
 </div>
