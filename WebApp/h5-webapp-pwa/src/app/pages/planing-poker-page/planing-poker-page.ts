@@ -51,7 +51,7 @@ ngOnInit() {
   this.socketService.gameEndend$.subscribe(() => {
     this.gameHasEnded = true;
     this.winnerModal.closeureText = "We have an agreement!"
-    this.winnerModal.duckerName = "The task is estimated at " + this.players[0].storyPoints;
+    this.winnerModal.duckerName = "The " + this.task + " is estimated at " + this.players[0].storyPoints;
     this.winnerModal.show();
     this.socketService.closeWebSocketConnection();
     this.cdr.markForCheck();
@@ -108,7 +108,7 @@ ngOnInit() {
   this.players.every(p => p.storyPoints === this.players[0].storyPoints);
   if(allSameStoryPoints){
     this.socketService.gameFinished();
-    this.winnerModal.show();
+  this.gameHasEnded = true;
   } 
   }
   newRound() {
