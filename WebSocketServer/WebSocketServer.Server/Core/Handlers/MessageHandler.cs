@@ -511,6 +511,8 @@ public class MessageHandler : IMessageHandler
             await _connectionManager.SendAsync(user.ConnectionId, responseJson);
 
         }
+        var host = _lobbyManager.GetLobbyHostId(lobbyCode.Value);
+        await _connectionManager.SendAsync(host, responseJson);
         // Create and save the game record
         var game = new DuckingGame
         {
