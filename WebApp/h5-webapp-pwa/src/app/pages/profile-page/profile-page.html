@@ -6,7 +6,7 @@
 
       <!-- USERNAME -->
       @if (username()) {
-        <h1>Hello "{{ username() }}" 👋</h1>
+        <h1>Hello "{{ username() }}"</h1>
       } @else {
         <div class="error-message">
           {{ errorMessage() }}
