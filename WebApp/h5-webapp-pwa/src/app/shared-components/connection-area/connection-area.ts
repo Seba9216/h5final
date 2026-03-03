@@ -56,7 +56,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
     );
   this.subs.add(
     this.socketService.gameEndend$.subscribe(ds => {
-      this.gameEndend.emit();
+      this._currentPlayers = [];
     })
   )
   }
