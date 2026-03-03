@@ -10,7 +10,7 @@ const envContent = `
 export const environment = {
   production: false,
   ApiUrl: '${process.env.ApiUrl}',
-  WebSocketUrl: '${process.env.WebSocketUrl}',
+  WebSocketUrl: '${process.env.WebSocketUrl}'
 };
 `;
 
