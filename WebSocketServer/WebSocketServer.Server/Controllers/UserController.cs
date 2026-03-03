@@ -29,7 +29,7 @@ public class UserController : ControllerBase
         {
             return BadRequest("Invalid user data");
         }
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, workFactor: 12);
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
