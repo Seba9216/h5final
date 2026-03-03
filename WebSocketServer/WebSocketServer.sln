@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer.Core", "WebSocketServer.Core\WebSocketServer.Core.csproj", "{A00FDF6C-9373-44CE-ACE5-0A2FF54CAA6E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer.Server", "WebSocketServer.Server\WebSocketServer.Server.csproj", "{A8410C66-8223-44A9-892E-13C4DE3F293D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServerTests", "WebSocketServerTests\WebSocketServerTests.csproj", "{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,8 +43,23 @@ Global
 		{A8410C66-8223-44A9-892E-13C4DE3F293D}.Release|x64.Build.0 = Release|Any CPU
 		{A8410C66-8223-44A9-892E-13C4DE3F293D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A8410C66-8223-44A9-892E-13C4DE3F293D}.Release|x86.Build.0 = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|x64.Build.0 = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Debug|x86.Build.0 = Debug|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|x64.ActiveCfg = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|x64.Build.0 = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA010897-9FDF-47E2-B0E0-D6AF0B68306C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {469D4220-7CC0-4399-B0CD-696A29C6BF59}
 	EndGlobalSection
 EndGlobal

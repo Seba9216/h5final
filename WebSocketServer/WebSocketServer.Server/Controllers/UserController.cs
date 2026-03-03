@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Generators;
 using WebSocketServer.Core.Auth;
 using WebSocketServer.Core.context;
 using WebSocketServer.Models;
@@ -28,7 +29,7 @@ public class UserController : ControllerBase
         {
             return BadRequest("Invalid user data");
         }
-
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
@@ -64,24 +65,20 @@ public class UserController : ControllerBase
         {
             return BadRequest("Username and password are required");
         }
-
         var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == request.UserName && u.Password == request.Password);
-
-        if (user == null)
+            .FirstOrDefaultAsync(u => u.UserName == request.UserName);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
         {
             return Unauthorized("Invalid username or password");
         }
 
         var token = _tokenService.GenerateToken(user.Id, user.UserName);
-
         _dbContext.Logins.Add(new DuckingLogins
         {
             UserId = user.Id,
             LoginTime = DateTime.UtcNow
         });
         await _dbContext.SaveChangesAsync();
-
         return Ok(new { id = user.Id, userName = user.UserName, token, message = "Login successful" });
     }
 }

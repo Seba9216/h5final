@@ -11,6 +11,7 @@ public class GameHistoryRepository : IGameHistoryRepository
     {
         _duckingContext = duckingContext;
     }
+
   public async Task<DuckingGameHistory> GetDuckingGameHistoryFromUserId(int userId)
     {
         var games = await _duckingContext.Games
