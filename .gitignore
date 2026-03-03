@@ -83,3 +83,4 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+WebApp/h5-webapp-pwa/src/environments/environment.ts
