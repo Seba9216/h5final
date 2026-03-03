@@ -20,6 +20,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
   @Input() gameType: string | null = 'planning-poker';
   @Input() task! : string;
   @Output() gameStarted = new EventEmitter<Ducker[]>();
+  @Output() gameEndend = new EventEmitter<void>();
 
   // To manage memory and observables
   private subs = new Subscription();
@@ -53,7 +54,13 @@ export class ConnectionArea implements OnInit, OnDestroy {
         this.gameStarted.emit(duckers);
       })
     );
+  this.subs.add(
+    this.socketService.gameEndend$.subscribe(ds => {
+      this.gameEndend.emit();
+    })
+  )
   }
+
 
   ngOnDestroy(): void {
     // Clean up listeners when component is destroyed
