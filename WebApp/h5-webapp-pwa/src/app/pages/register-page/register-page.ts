@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';  // ← ADD THIS
 
 @Component({
   selector: 'app-register-page',
@@ -70,7 +71,6 @@ import { AuthService } from '../../services/auth.service';
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-
     .register-card {
       background: white;
       padding: 2rem;
@@ -79,24 +79,20 @@ import { AuthService } from '../../services/auth.service';
       width: 100%;
       max-width: 400px;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 1.5rem;
       color: #333;
     }
-
     .form-group {
       margin-bottom: 1rem;
     }
-
     label {
       display: block;
       margin-bottom: 0.5rem;
       color: #555;
       font-weight: 500;
     }
-
     input {
       width: 100%;
       padding: 0.75rem;
@@ -105,12 +101,10 @@ import { AuthService } from '../../services/auth.service';
       font-size: 1rem;
       box-sizing: border-box;
     }
-
     input:focus {
       outline: none;
       border-color: #667eea;
     }
-
     button {
       width: 100%;
       padding: 0.75rem;
@@ -123,16 +117,13 @@ import { AuthService } from '../../services/auth.service';
       cursor: pointer;
       transition: transform 0.2s;
     }
-
     button:hover:not(:disabled) {
       transform: translateY(-2px);
     }
-
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-
     .error-message {
       color: #d32f2f;
       background: #ffebee;
@@ -141,7 +132,6 @@ import { AuthService } from '../../services/auth.service';
       margin-bottom: 1rem;
       text-align: center;
     }
-
     .success-message {
       color: #2e7d32;
       background: #e8f5e9;
@@ -150,19 +140,16 @@ import { AuthService } from '../../services/auth.service';
       margin-bottom: 1rem;
       text-align: center;
     }
-
     .login-link {
       text-align: center;
       margin-top: 1.5rem;
       color: #555;
     }
-
     .login-link a {
       color: #667eea;
       text-decoration: none;
       font-weight: 600;
     }
-
     .login-link a:hover {
       text-decoration: underline;
     }
@@ -203,11 +190,9 @@ export class RegisterPage {
     this.isLoading = true;
 
     try {
-      const response = await fetch('https://augustdev.work/api/user', {
+      const response = await fetch(`${environment.ApiUrl}/user`, {  // ← CHANGED
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userName: this.username,
           password: this.password
@@ -218,9 +203,7 @@ export class RegisterPage {
         const data = await response.json();
         this.authService.login(data.id, this.username, data.token);
         this.successMessage = 'Account created successfully! Redirecting...';
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 1500);
+        setTimeout(() => this.router.navigate(['/']), 1500);
       } else {
         const error = await response.text();
         this.errorMessage = error || 'Failed to create account';

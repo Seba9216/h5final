@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Ducker } from '../../models/duckrace/ducker';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment'
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameSocketService {
-  private SERVER_URL = "wss://augustdev.work/ws";
+  private SERVER_URL = environment.WebSocketUrl;
   private ws: WebSocket | null = null;
 
   private playersMap = new Map<string, Ducker>();

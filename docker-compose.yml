@@ -1,5 +1,6 @@
 services:
   websocket-server:
+    env_file: ".env"
     build:
       context: ./WebSocketServer
       dockerfile: Dockerfile
@@ -32,6 +33,7 @@ services:
 
 
   frontend:
+    env_file: ".env"
     build:
       context: ./WebApp/h5-webapp-pwa
       dockerfile: Dockerfile

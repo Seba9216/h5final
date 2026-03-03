@@ -52,6 +52,7 @@ public class Startup
             ReceiveBufferSize = 4 * 1024
         };
         webSocketOptions.AllowedOrigins.Add("https://augustdev.work");
+        webSocketOptions.AllowedOrigins.Add("http://localhost:8000");
 
         app.UseWebSockets(webSocketOptions);
 

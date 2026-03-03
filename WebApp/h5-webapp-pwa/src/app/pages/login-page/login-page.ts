@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-login-page',
   standalone: true,
@@ -161,7 +161,7 @@ export class LoginPage {
     this.isLoading = true;
 
     try {
-      const response = await fetch('https://augustdev.work/api/user/login', {
+      const response = await fetch( environment.ApiUrl + '/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

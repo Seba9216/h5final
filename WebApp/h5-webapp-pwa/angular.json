@@ -77,7 +77,7 @@
           },
           "defaultConfiguration": "development",
     	  "options": {
-      	    "allowedHosts": ["augustdev.work"]
+      	    "allowedHosts": ["augustdev.work","localhost"]
     	  }
         },
         "test": {
