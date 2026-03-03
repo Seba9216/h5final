@@ -11,7 +11,6 @@ export const environment = {
   production: false,
   ApiUrl: '${process.env.ApiUrl}',
   WebSocketUrl: '${process.env.WebSocketUrl}',
-  ConnectionString: '${process.env.ConnectionString}'
 };
 `;
 
