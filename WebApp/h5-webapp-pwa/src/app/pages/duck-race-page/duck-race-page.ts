@@ -30,8 +30,6 @@ export class DuckRacePage {
     this.winnerModal.duckerName = finishedDuck.name + " has won the race";
     this.winnerModal.closeureText = "🏆 We Have a Winner! 🏆"; 
     this.winnerModal.show();
-      this.gameSocketService.closeWebSocketConnection();
-
     }
   }
 }

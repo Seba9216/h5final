@@ -159,8 +159,11 @@ case "story_points": {
         this.task = message.Task;
         this.gameStartedSubject.next(duckers);
         break;
-      case "finished_game":
-      this.gameEndedSubject.next();
+case "finished_game":
+  this.playersMap.clear();        // ← add this
+  this.updatePlayers();           // ← and this, so players$ emits []
+  this.gameEndedSubject.next();
+  break;
       break;
       case "start_new_round":
           this.newRoundSubject.next();

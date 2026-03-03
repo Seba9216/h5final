@@ -54,11 +54,13 @@ export class ConnectionArea implements OnInit, OnDestroy {
         this.gameStarted.emit(duckers);
       })
     );
+ this.subs.add(
   this.socketService.gameEndend$.subscribe(() => {
     this._currentPlayers = [];
-    this.cdr.markForCheck();
+    this.newGamePin = '';
     this.cdr.detectChanges();
-  });
+  })
+);
   }
 
 
