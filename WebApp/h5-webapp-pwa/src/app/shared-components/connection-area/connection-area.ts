@@ -15,6 +15,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
   gamePin = '';
   duckerName = '';
   newGamePin = '';
+  lobbyType = '';
   // Local storage for players to satisfy the 'playersArray' getter
   private _currentPlayers: Ducker[] = [];
   @Input() gameType: string | null = 'planning-poker';
@@ -77,7 +78,7 @@ export class ConnectionArea implements OnInit, OnDestroy {
 
   public JoinGame() {
     if (this.gamePin && this.duckerName) {
-      this.socketService.joinGame(this.gamePin, this.duckerName);
+      this.socketService.joinGame(this.gamePin, this.duckerName, this.lobbyType);
     } else {
       console.warn("Name and Pin required");
     }

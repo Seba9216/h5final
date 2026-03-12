@@ -42,12 +42,13 @@ export class GameSocketService {
     this.updatePlayers();
   }
 
-  public joinGame(gamePin: string, duckerName: string) {
+  public joinGame(gamePin: string, duckerName: string, lobbyType: string) {
     this.setupWebSocket();
     this.sendWhenOpen({
       type: "join_lobby",
       LobbyCode: +gamePin,
-      DuckerName: duckerName
+      DuckerName: duckerName,
+      LobbyType: lobbyType
     });
   }
 

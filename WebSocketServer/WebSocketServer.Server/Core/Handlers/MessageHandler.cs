@@ -151,6 +151,7 @@ public class MessageHandler : IMessageHandler
                 connectionId,
                 joinMessage.LobbyCode,
                 joinMessage.DuckerName,
+                joinMessage.LobbyType,
                 userId
             );
 
