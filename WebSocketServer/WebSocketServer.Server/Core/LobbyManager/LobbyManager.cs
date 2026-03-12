@@ -31,7 +31,7 @@ public class LobbyManager : ILobbyManager
         return lobbyCode;
     }
 
-    public bool JoinLobby(string connectionId, int lobbyCode, string duckerName, int? userId = null)
+    public bool JoinLobby(string connectionId, int lobbyCode, string duckerName, string lobbyType, int? userId = null)
     {
         if (!_lobbies.ContainsKey(lobbyCode))
         {
@@ -49,6 +49,23 @@ public class LobbyManager : ILobbyManager
 
         if (_lobbies.TryGetValue(lobbyCode, out var lobby))
         {
+            // Validate lobby type
+            LobbyType parsedLobbyType;
+            if(!Enum.TryParse(lobbyType, true, out parsedLobbyType))
+             {
+                _logger.LogWarning("Attempt to join lobby {LobbyCode} with invalid lobby type '{LobbyType}' by {ConnectionId}",
+                    lobbyCode, lobbyType, connectionId);
+
+                return false;
+            }
+            if (parsedLobbyType != lobby.LobbyType)
+            {
+                _logger.LogWarning("Attempt to join lobby {LobbyCode} with mismatched lobby type by {ConnectionId}",
+                    lobbyCode, connectionId);
+
+                return false;
+            }
+
             bool added = lobby.AddPlayer(connectionId, duckerName, userId);
 
             if (added)

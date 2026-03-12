@@ -28,6 +28,7 @@ public class JoinLobbyMessage : WebSocketMessage
 {
     public string DuckerName { get; set; } = string.Empty;
     public int LobbyCode { get; set; }
+    public string LobbyType { get; set; } = string.Empty;
 }
 
 public class LobbyCreatedResponse

@@ -3,7 +3,7 @@ namespace WebSocketServer.Core.LobbyManager;
 public interface ILobbyManager
 {
     int CreateLobby(string hostConnectionId, LobbyType lobbyType);
-    bool JoinLobby(string connectionId, int lobbyCode, string playerName, int? userId = null);
+    bool JoinLobby(string connectionId, int lobbyCode, string playerName, string lobbyType, int? userId = null);
     bool LeaveLobby(string connectionId, int lobbyCode);
     int? GetLobbyCodeForConnection(string connectionId);
     public List<Ducker> GetDuckersFromLobbyCode(int lobbyCode);
