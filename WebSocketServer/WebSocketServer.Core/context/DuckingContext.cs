@@ -17,9 +17,7 @@ public class DuckingContext : DbContext
     public DbSet<DuckingLogins> Logins { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // Configuration is now handled via dependency injection
-        // Keep this empty or add additional configuration if needed
+    {   
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
