@@ -139,6 +139,7 @@ public class MessageHandler : IMessageHandler
                 await SendErrorAsync(connectionId, "Invalid join lobby request");
                 return;
             }
+            
 
             // Resolve userId from auth token
             int? userId = null;

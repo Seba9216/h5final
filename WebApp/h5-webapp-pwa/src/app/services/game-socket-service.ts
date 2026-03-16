@@ -69,6 +69,7 @@ export class GameSocketService {
   {
     this.sendWhenOpen({ type: "game_finished" });
   }
+
   public newRound(){
     this.sendWhenOpen({ type: "new_round"});
   }
@@ -93,17 +94,14 @@ export class GameSocketService {
   private handleMessage(event: MessageEvent) {
     const message = JSON.parse(event.data.toString());
     console.log("Received:", message);
-
     switch (message.Type) {
       case "lobby_created":
         this.lobbyCodeSubject.next(message.LobbyCode);
         this.isHost = true;
         console.log(this.isHost);
         break;
-
       case "joined_lobby":
-        this.playersMap.clear();
-        
+        this.playersMap.clear();     
         // Add existing players
         message.ConnectedPlayers.forEach((ducker: any) => {
           this.playersMap.set(ducker.ConnectionId, {
@@ -114,12 +112,10 @@ export class GameSocketService {
             userId: ducker.UserId ?? null
           });
         });        
-      
         this.updatePlayers();
         break;
 case "story_points": {
   const player = this.playersMap.get(message.ConnectionId);
-
   if (player) {
     this.playersMap.set(message.ConnectionId, {
       ...player,
@@ -129,7 +125,6 @@ case "story_points": {
   this.updatePlayers();
   break;
 }
-
       case "player_joined":
         this.playersMap.set(message.Player.ConnectionId, {
           connectionId: message.Player.ConnectionId,
@@ -148,7 +143,6 @@ case "story_points": {
         console.log('players left ' + message.ConnectionId)
         this.updatePlayers();
         break;
-
       case "start_game":
         const duckers: Ducker[] = message.Players.map((p: any) => ({
           connectionId: p.ConnectionId,
@@ -161,11 +155,10 @@ case "story_points": {
         this.gameStartedSubject.next(duckers);
         break;
 case "finished_game":
-  this.playersMap.clear();        // ← add this
-  this.updatePlayers();           // ← and this, so players$ emits []
+  this.playersMap.clear();       
+  this.updatePlayers();          
   this.gameEndedSubject.next();
   break;
-      break;
       case "start_new_round":
           this.newRoundSubject.next();
       break;
