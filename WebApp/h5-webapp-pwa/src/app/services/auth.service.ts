@@ -9,7 +9,25 @@ export class AuthService {
 
   constructor(private router: Router) {
     const token = localStorage.getItem('authToken');
-    this.isAuthenticated = !!token;
+    if (token) {
+      fetch('/api/user/validate-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer
+              ${token}`
+        }
+      }).then(response => {
+        if (response.ok) {
+          this.isAuthenticated = true;
+        } else {
+          this.logout();
+        }
+      })
+        .catch(() => {
+          this.logout();
+        });
+    }
   }
 
   login(userId: number, userName: string, token: string): void {

@@ -81,4 +81,42 @@ public class UserController : ControllerBase
         await _dbContext.SaveChangesAsync();
         return Ok(new { id = user.Id, userName = user.UserName, token, message = "Login successful" });
     }
+
+    [HttpGet("validate-token")]
+    public IActionResult ValidateToken([FromQuery] string? token = null)
+    {
+        var providedToken = token;
+
+        if (string.IsNullOrWhiteSpace(providedToken) &&
+            Request.Headers.TryGetValue("Authorization", out var authorizationHeader))
+        {
+            var rawHeader = authorizationHeader.ToString();
+            if (rawHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                providedToken = rawHeader["Bearer ".Length..].Trim();
+            }
+            else
+            {
+                providedToken = rawHeader.Trim();
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(providedToken))
+        {
+            return BadRequest(new { valid = false, message = "Token is required" });
+        }
+
+        var isValid = _tokenService.ValidateToken(providedToken);
+        if (!isValid)
+        {
+            return Unauthorized(new { valid = false, message = "Invalid token" });
+        }
+
+        return Ok(new
+        {
+            valid = true,
+            userId = _tokenService.GetUserIdFromToken(providedToken),
+            userName = _tokenService.GetUserNameFromToken(providedToken)
+        });
+    }
 }

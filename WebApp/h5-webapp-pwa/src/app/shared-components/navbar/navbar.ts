@@ -5,20 +5,20 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  	imports: [RouterLinkActive,RouterLink],
+  imports: [RouterLinkActive, RouterLink],
   templateUrl: './navbar.html',
 })
 export class Navbar {
 
-    constructor(    private authService: AuthService,
-){
+  constructor(private authService: AuthService,
+  ) {
 
-    }
+  }
 
- IsLoggedIn(): boolean{
-  return this.authService.isLoggedIn();
- }   
- Logout(){
-  this.authService.logout()
- }
+  IsLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+  Logout() {
+    this.authService.logout()
+  }
 }
