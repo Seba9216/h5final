@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -165,7 +165,8 @@ export class RegisterPage {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async onRegister() {
@@ -199,20 +200,24 @@ export class RegisterPage {
         })
       });
 
+      this.isLoading = false;
+      this.cdr.detectChanges();
+
       if (response.ok) {
         const data = await response.json();
         this.authService.login(data.id, this.username, data.token);
         this.successMessage = 'Account created successfully! Redirecting...';
         setTimeout(() => this.router.navigate(['/']), 1500);
       } else {
-        const error = await response.text();
+        const error = await response.text().catch(() => '');
         this.errorMessage = error || 'Failed to create account';
+        this.cdr.detectChanges();
       }
     } catch (error) {
+      this.isLoading = false;
       this.errorMessage = 'Failed to connect to server';
       console.error('Registration error:', error);
-    } finally {
-      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 }

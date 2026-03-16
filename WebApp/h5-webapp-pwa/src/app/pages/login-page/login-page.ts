@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -153,7 +153,8 @@ export class LoginPage {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async onLogin() {
@@ -172,19 +173,23 @@ export class LoginPage {
         })
       });
 
+      this.isLoading = false;
+      this.cdr.detectChanges();
+
       if (response.ok) {
         const data = await response.json();
         this.authService.login(data.id, data.userName, data.token);
         this.router.navigate(['/']);
       } else {
-        const error = await response.text();
+        const error = await response.text().catch(() => '');
         this.errorMessage = error || 'Invalid username or password';
+        this.cdr.detectChanges();
       }
     } catch (error) {
+      this.isLoading = false;
       this.errorMessage = 'Failed to connect to server';
       console.error('Login error:', error);
-    } finally {
-      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 }
