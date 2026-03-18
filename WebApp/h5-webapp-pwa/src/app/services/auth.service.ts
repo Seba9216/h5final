@@ -11,22 +11,23 @@ export class AuthService {
     const token = localStorage.getItem('authToken');
     if (token) {
       fetch('/api/user/validate-token', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer
-              ${token}`
+          'Authorization': `Bearer ${token}`
         }
-      }).then(response => {
+      })
+      .then(response => {
         if (response.ok) {
           this.isAuthenticated = true;
         } else {
           this.logout();
         }
       })
-        .catch(() => {
+      .catch((exception) => {
+        console.log("error", exception);
           this.logout();
-        });
+      });
     }
   }
 
