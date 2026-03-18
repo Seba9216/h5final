@@ -15,7 +15,6 @@ export class ConnectionArea implements OnInit, OnDestroy {
   gamePin = '';
   duckerName = '';
   newGamePin = '';
-  // Local storage for players to satisfy the 'playersArray' getter
   private _currentPlayers: Ducker[] = [];
   @Input() gameType: string | null = null;
   @Input() task! : string;
@@ -31,8 +30,6 @@ export class ConnectionArea implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // 1. Subscribe to Players
-    // We manually subscribe here because we cannot use the 'async' pipe in the HTML
     this.subs.add(
       this.socketService.players$.subscribe(players => {
         this._currentPlayers = players;

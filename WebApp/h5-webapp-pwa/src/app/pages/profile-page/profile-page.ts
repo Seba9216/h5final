@@ -32,7 +32,7 @@ export class ProfilePage {
   private loadUserLogins() {
     const token = this.authService.getToken();
     const userId = this.authService.getUserId();
-    this.http.get<any[]>(`${environment.ApiUrl}/LoginHistory/${userId}`, {  // ← CHANGED
+    this.http.get<any[]>(`${environment.ApiUrl}/LoginHistory/${userId}`, { 
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (data) => this.userLogins.set(data),
