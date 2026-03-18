@@ -20,6 +20,7 @@ export class AuthService {
       .then(response => {
         if (response.ok) {
           this.isAuthenticated = true;
+          this.router.navigate(['/'])
         } else {
           this.logout();
         }
@@ -28,6 +29,7 @@ export class AuthService {
         console.log("error", exception);
           this.logout();
       });
+
     }
   }
 
